@@ -3,466 +3,586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE IMPOSTOR 2.0 - Fixed</title>
+    <title>THE IMPOSTOR: ULTIMATE EDITION</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --color-dark: #050508; --color-panel: #111116; }
-        body { font-family: 'Inter', sans-serif; background: var(--color-dark); color: #fff; min-height: 100vh; overflow-x: hidden; }
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
-        .bg-animated { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #000 100%); }
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff0099;
+            --neon-green: #00ff66;
+            --bg-dark: #0a0a0f;
+            --panel-bg: #14141a;
+        }
+        body { background-color: var(--bg-dark); color: #fff; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Colores de Jugadores */
-        .p-red { --theme: #ff4444; } .p-blue { --theme: #4488ff; } .p-green { --theme: #00cc66; } 
-        .p-yellow { --theme: #ffcc00; } .p-purple { --theme: #cc44ff; }
+        /* Animaciones y Efectos */
+        .glow-text { text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
+        .card { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
+        .card.active { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         
-        .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; backdrop-filter: blur(10px); }
-        .avatar { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; border: 2px solid var(--theme, #666); color: var(--theme, #aaa); background: rgba(255,255,255,0.05); box-shadow: 0 0 15px var(--theme, rgba(0,0,0,0)); transition: all 0.3s; }
+        /* Chat Bubbles */
+        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; position: relative; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .active-turn { transform: scale(1.1); box-shadow: 0 0 30px var(--theme); border-color: #fff; }
+        .bubble-civil { border-left: 3px solid var(--neon-cyan); background: linear-gradient(90deg, rgba(0,243,255,0.05) 0%, transparent 100%); }
+        .bubble-impostor { border-left: 3px solid var(--neon-pink); background: linear-gradient(90deg, rgba(255,0,153,0.05) 0%, transparent 100%); }
         
-        .btn { padding: 14px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-family: 'Space Grotesk'; }
-        .btn-primary { background: #fff; color: #000; border: none; }
-        .btn-primary:hover { background: #ddd; transform: translateY(-2px); }
+        /* Roles (Solo visibles en espectador/fin) */
+        .role-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
+        .role-civil { color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+        .role-impostor { color: var(--neon-pink); border: 1px solid var(--neon-pink); }
         
-        .screen { display: none; min-height: 100vh; flex-direction: column; padding: 20px; animation: fade 0.5s; }
+        .screen { display: none; min-height: 100vh; flex-direction: column; }
         .screen.active { display: flex; }
-        @keyframes fade { from{opacity:0} to{opacity:1} }
-        
-        .info-pill { background: #222; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid #333; }
-        
-        /* Chat Bubble */
-        .bubble { background: #222; padding: 15px 20px; border-radius: 0 20px 20px 20px; margin-left: 10px; max-width: 80%; border: 1px solid #333; position: relative; }
-        .bubble::before { content: ''; position: absolute; top: 0; left: -10px; width: 0; height: 0; border-top: 15px solid #222; border-left: 15px solid transparent; }
+
+        /* Loader IA */
+        .typing-dot { display: inline-block; width: 6px; height: 6px; background: var(--neon-green); border-radius: 50%; animation: pulse 1s infinite; margin: 0 2px; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        /* Log de Debug */
+        #debug-console { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #888; border-top: 1px solid #333; max-height: 150px; overflow-y: auto; padding: 10px; background: #000; }
+        .log-entry { margin-bottom: 4px; border-left: 2px solid #333; padding-left: 5px; }
+        .log-success { border-color: var(--neon-green); color: #cfc; }
+        .log-error { border-color: var(--neon-pink); color: #fcc; }
     </style>
 </head>
 <body>
-    <div class="bg-animated"></div>
 
-    <div id="screen-start" class="screen active justify-center items-center text-center">
-        <h1 class="font-display text-8xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">IMPOSTOR</h1>
-        <p class="text-gray-400 mb-12 tracking-widest uppercase text-sm">v2.0 - Modelos Conectados</p>
+    <div id="screen-menu" class="screen active items-center justify-center p-4 text-center">
+        <h1 class="text-6xl md:text-8xl font-black mb-2 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 glow-text">THE IMPOSTOR</h1>
+        <p class="text-gray-400 mb-12 font-mono text-sm">IA REAL • DEBATE EN VIVO • SIN GUIONES</p>
         
-        <div class="flex flex-col gap-4 w-full max-w-sm">
-            <button onclick="game.start(false)" class="btn btn-primary">👤 Jugar como Humano</button>
-            <button onclick="game.start(true)" class="btn" style="border:1px solid #555; color:#fff">📺 Modo Espectador</button>
+        <div class="flex flex-col md:flex-row gap-6 w-full max-w-2xl z-10">
+            <button onclick="Game.init(false)" class="flex-1 bg-white text-black font-bold py-6 px-8 rounded-xl hover:scale-105 transition-transform border-2 border-transparent hover:border-cyan-400 shadow-lg">
+                🎮 JUGAR COMO HUMANO
+            </button>
+            <button onclick="Game.init(true)" class="flex-1 bg-transparent text-white font-bold py-6 px-8 rounded-xl border-2 border-gray-600 hover:border-pink-500 hover:text-pink-400 hover:scale-105 transition-all">
+                👁️ MODO ESPECTADOR
+            </button>
         </div>
-        <p class="mt-8 text-xs text-gray-600">Powered by Pollinations.ai (OpenAI/Mistral)</p>
+        <div class="mt-8 text-xs text-gray-600 max-w-md">
+            Nota: Este juego conecta con APIs de IA en tiempo real. Si las respuestas tardan, es porque están "pensando".
+        </div>
     </div>
 
-    <div id="screen-game" class="screen max-w-6xl mx-auto w-full pt-4">
-        
-        <div class="flex justify-between items-center mb-6 bg-white/5 p-4 rounded-xl border border-white/10">
-            <div>
-                <span class="text-xs text-gray-400 block">RONDA</span>
-                <span id="round-display" class="font-display text-2xl font-bold">1/3</span>
+    <div id="screen-game" class="screen">
+        <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-black/50 backdrop-blur-md sticky top-0 z-20">
+            <div class="flex items-center gap-4">
+                <div class="text-xs font-mono text-gray-400">RONDA <span id="round-idx" class="text-white text-xl font-bold">1</span>/3</div>
+                <div id="status-indicator" class="px-3 py-1 rounded-full bg-green-900/30 text-green-400 text-xs border border-green-800 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> ONLINE
+                </div>
             </div>
             
-            <div id="secret-panel" class="text-center hidden">
-                <span class="text-xs text-gray-400 block uppercase tracking-wider">Palabra Secreta</span>
-                <span id="secret-word-display" class="font-display text-3xl font-black text-yellow-400 filter drop-shadow-lg">???</span>
-                <div id="secret-category-hint" class="text-xs text-gray-500"></div>
-            </div>
-
-            <div>
-                <span class="text-xs text-gray-400 block text-right">ESTADO</span>
-                <span id="status-display" class="font-bold text-green-400 animate-pulse">EN CURSO</span>
+            <div id="secret-container" class="text-center hidden">
+                <div class="text-[10px] text-gray-500 uppercase tracking-widest">PALABRA SECRETA</div>
+                <div id="secret-word" class="text-2xl font-black text-cyan-400 glow-text">???</div>
+                <div id="secret-hint" class="text-xs text-pink-400 hidden"></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-            
-            <div class="lg:col-span-2 flex flex-col gap-4">
-                <div class="card p-6 min-h-[300px] flex flex-col justify-end relative overflow-hidden">
-                    <div id="conversation-log" class="space-y-6 max-h-[500px] overflow-y-auto pr-2 pb-4">
-                        </div>
+        <div class="flex flex-col lg:flex-row flex-1 overflow-hidden">
+            <div class="flex-1 flex flex-col p-4 overflow-hidden relative">
+                <div id="chat-container" class="flex-1 overflow-y-auto space-y-4 pb-20 pr-2 scroll-smooth">
+                    <div class="text-center text-gray-600 text-sm mt-10 italic">Iniciando conexión neuronal...</div>
                 </div>
 
-                <div id="human-input-area" class="hidden transition-all duration-300">
-                    <div class="flex gap-2">
-                        <input type="text" id="human-input" class="flex-1 bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none" placeholder="Describe la palabra con 1-3 palabras..." maxlength="40">
-                        <button onclick="game.humanSubmit()" class="btn btn-primary py-0">ENVIAR</button>
+                <div id="human-controls" class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black via-black to-transparent hidden">
+                    <div class="max-w-3xl mx-auto flex gap-2">
+                        <input type="text" id="human-input" class="flex-1 bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Escribe tu pista (1 sola palabra)..." maxlength="20" autocomplete="off">
+                        <button onclick="Game.handleHumanInput()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-6 py-3 rounded-lg shadow-lg shadow-cyan-900/20">ENVIAR</button>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3">
-                <h3 class="text-xs font-bold text-gray-500 uppercase px-2">Jugadores Conectados</h3>
+            <div class="w-full lg:w-80 bg-panel-bg border-l border-gray-800 p-4 flex flex-col gap-4 overflow-y-auto">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">JUGADORES</h3>
                 <div id="players-list" class="flex flex-col gap-3">
                     </div>
                 
-                <div id="debug-box" class="mt-auto hidden">
-                    <div class="bg-black border border-gray-800 rounded p-2 text-[10px] font-mono text-green-500 h-32 overflow-y-auto" id="debug-log">
-                        > Sistema iniciado...
-                    </div>
+                <div class="mt-auto">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">DEBUG DE PENSAMIENTOS</h3>
+                    <div id="debug-console"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="screen-voting" class="screen justify-center items-center">
-        <h2 class="text-3xl font-display font-bold mb-8">VOTACIÓN FINAL</h2>
-        <div id="voting-container" class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-4xl"></div>
-        <p id="voting-status" class="mt-8 text-gray-400 animate-pulse">Analizando sospechosos...</p>
+    <div id="screen-voting" class="screen items-center justify-center p-6 text-center">
+        <h2 class="text-4xl font-bold mb-2">FASE DE VOTACIÓN</h2>
+        <p class="text-gray-400 mb-8">Selecciona al jugador sospechoso</p>
+        
+        <div id="voting-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-4xl">
+            </div>
+        
+        <div id="voting-log" class="mt-8 text-sm font-mono text-left w-full max-w-2xl bg-black/50 p-4 rounded-lg h-40 overflow-y-auto hidden"></div>
     </div>
 
-    <div id="screen-result" class="screen justify-center items-center text-center">
-        <h1 id="winner-title" class="text-6xl font-black mb-4">GANAN LOS CIVILES</h1>
-        <p id="winner-desc" class="text-xl text-gray-300 mb-8 max-w-lg mx-auto">El impostor ha sido eliminado.</p>
+    <div id="screen-result" class="screen items-center justify-center p-6 text-center">
+        <div id="result-icon" class="text-8xl mb-6">🏆</div>
+        <h1 id="result-title" class="text-5xl md:text-7xl font-black mb-4">VICTORIA</h1>
+        <p id="result-msg" class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto"></p>
         
-        <div class="bg-white/10 p-6 rounded-xl mb-8">
-            <p class="text-sm text-gray-400">La palabra era:</p>
-            <p id="final-word" class="text-4xl font-bold text-white">PIZZA</p>
+        <div class="bg-white/5 border border-white/10 p-6 rounded-xl mb-8 w-full max-w-md">
+            <div class="text-sm text-gray-500 uppercase mb-2">La palabra era</div>
+            <div id="result-word" class="text-4xl font-bold text-cyan-400">???</div>
+            <div id="result-impostor" class="mt-4 text-pink-400 font-mono text-sm"></div>
         </div>
 
-        <button onclick="location.reload()" class="btn btn-primary">JUGAR OTRA VEZ</button>
+        <button onclick="location.reload()" class="bg-white text-black font-bold py-3 px-8 rounded-full hover:bg-gray-200 transition-colors">
+            JUGAR OTRA VEZ
+        </button>
     </div>
 
     <script>
-        // CONFIGURACIÓN DEL JUEGO
-        const CONFIG = {
-            roles: ['civil', 'civil', 'civil', 'civil', 'impostor'],
-            db: [
-                { cat: "Comida", word: "Pizza", forbidden: ["queso", "redonda"] },
-                { cat: "Animal", word: "Jirafa", forbidden: ["cuello", "alta"] },
-                { cat: "Objeto", word: "Espejo", forbidden: ["reflejo", "ver"] },
-                { cat: "Lugar", word: "Hospital", forbidden: ["médico", "enfermo"] },
-                { cat: "Deporte", word: "Tenis", forbidden: ["raqueta", "red"] }
-            ],
-            botNames: [
-                { name: "Alpha", color: "p-red", model: "GPT-4o" },
-                { name: "Bravo", color: "p-blue", model: "Claude 3" },
-                { name: "Charlie", color: "p-green", model: "Llama 3" },
-                { name: "Delta", color: "p-yellow", model: "Mistral" },
-                { name: "Echo", color: "p-purple", model: "Gemini" }
-            ]
-        };
+        // --- BASE DE DATOS MEJORADA ---
+        const DB = [
+            { cat: "Playa", word: "Arena", hints: ["mar", "castillo", "toalla", "sol"] },
+            { cat: "Cocina", word: "Sartén", hints: ["aceite", "huevo", "mango", "fuego"] },
+            { cat: "Cuerpo", word: "Ojo", hints: ["ver", "gafas", "color", "pestaña"] },
+            { cat: "Clima", word: "Lluvia", hints: ["agua", "nube", "paraguas", "mojado"] },
+            { cat: "Escuela", word: "Lápiz", hints: ["escribir", "goma", "papel", "dibujo"] },
+            { cat: "Cielo", word: "Luna", hints: ["noche", "blanca", "lobo", "cráter"] },
+            { cat: "Ropa", word: "Calcetín", hints: ["pie", "zapato", "lana", "par"] }
+        ];
 
-        // CLASE JUGADOR (IA)
-        class BotPlayer {
-            constructor(config, role, gameContext) {
-                this.id = config.name;
-                this.name = config.name;
-                this.colorClass = config.color;
-                this.modelName = config.model;
-                this.role = role;
-                this.game = gameContext;
-                this.isHuman = false;
-                this.eliminated = false;
-            }
-
-            async turn(round, history) {
-                const isImpostor = this.role === 'impostor';
-                const word = this.game.secretData.word;
-                const category = this.game.secretData.cat;
-
-                // Prompt estratégico sin JSON para evitar errores
-                let prompt = `Juego: 'El Impostor'.
-                Rol: ${isImpostor ? 'IMPOSTOR' : 'CIVIL'}.
-                ${isImpostor ? `No sabes la palabra. Categoría: ${category}. Miente para encajar.` : `Palabra: ${word}. Da una pista sutil pero clara para otros civiles.`}
-                Historial de chat: [${history.map(h => h.text).join(' | ')}].
-                
-                Tu tarea: Responde SOLO con una pista de 1 a 4 palabras. No uses explicaciones. No uses markdown. Solo el texto de la pista.`;
-
-                // Añadir estrategia al prompt
-                if (isImpostor) prompt += " Estrategia: Sé vago, usa sinónimos de lo que han dicho otros.";
-                else prompt += ` Estrategia: No digas la palabra '${word}' ni sus partes.`;
+        // --- SISTEMA DE API ROBUSTO ---
+        const AI = {
+            async generate(prompt, retries = 2) {
+                // Encodeamos correctamente para evitar errores de URL
+                const safePrompt = encodeURIComponent(prompt);
+                // Usamos un seed aleatorio para evitar caché de la API
+                const seed = Math.floor(Math.random() * 999999);
+                const url = `https://text.pollinations.ai/${safePrompt}?seed=${seed}&model=openai`;
 
                 try {
-                    // Llamada a API (Simulada o Real si está disponible)
-                    const responseText = await this.callAI(prompt);
-                    return this.cleanResponse(responseText);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos timeout
+
+                    const response = await fetch(url, { 
+                        method: 'GET',
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) throw new Error(`API ${response.status}`);
+                    
+                    let text = await response.text();
+                    return this.cleanText(text);
+
                 } catch (e) {
-                    console.error(e);
-                    return this.fallbackResponse();
+                    console.error("AI Error:", e);
+                    if (retries > 0) {
+                        UI.logDebug(`Reintentando conexión IA... (${retries})`, false);
+                        await new Promise(r => setTimeout(r, 1500));
+                        return this.generate(prompt, retries - 1);
+                    }
+                    return null; // Falló totalmente
                 }
+            },
+
+            cleanText(text) {
+                // Limpieza agresiva para evitar "Hola, soy una IA..."
+                // 1. Quitar comillas y JSON
+                let clean = text.replace(/["'{}]/g, '');
+                // 2. Quitar prefijos comunes de IAs parlanchinas
+                clean = clean.replace(/^(La palabra es|Mi pista es|Yo digo|Pista:|Respuesta:)/i, '');
+                // 3. Quitar explicaciones después de un punto
+                clean = clean.split('.')[0];
+                clean = clean.split('\n')[0];
+                // 4. Recortar espacios
+                return clean.trim();
+            }
+        };
+
+        // --- CLASE JUGADOR ---
+        class Player {
+            constructor(id, name, isHuman, role) {
+                this.id = id;
+                this.name = name;
+                this.isHuman = isHuman;
+                this.role = role; // 'civil' | 'impostor'
+                this.eliminated = false;
+                this.avatarColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                this.modelName = isHuman ? "Cerebro Humano" : ["GPT-4", "Claude-3", "Llama-3", "Mistral"][Math.floor(Math.random()*4)];
+            }
+
+            async playTurn(round, history, secretData) {
+                if (this.isHuman) {
+                    return new Promise(resolve => Game.humanResolve = resolve);
+                }
+
+                // INGENIERÍA DE PROMPTS AVANZADA
+                let systemPrompt = "";
+                const historyText = history.map(h => `[${h.player}]: ${h.text}`).join(" | ");
+                
+                if (this.role === 'civil') {
+                    systemPrompt = `Estás jugando a 'El Impostor'. Tu palabra secreta es "${secretData.word}".
+                    OBJETIVO: Da una pista de UNA SOLA PALABRA relacionada con "${secretData.word}".
+                    REGLAS:
+                    1. NO uses la palabra "${secretData.word}" ni sus derivadas.
+                    2. Sé astuto: Si la palabra es "Sol", no digas "Calor", di "Gafas" o "Verano".
+                    3. No repitas palabras dichas en el historial: ${historyText}.
+                    4. Responde SOLAMENTE con tu palabra pista. Nada más.`;
+                } else {
+                    systemPrompt = `Estás jugando a 'El Impostor'. Eres el IMPOSTOR.
+                    INFORMACIÓN: No sabes la palabra secreta. La categoría es "${secretData.cat}".
+                    OBJETIVO: Pasa desapercibido.
+                    REGLAS:
+                    1. Lee el historial: ${historyText}.
+                    2. Deduce el contexto y di una palabra que encaje vagamente con la categoría "${secretData.cat}" y con lo que han dicho los otros.
+                    3. Si no hay historial, di algo genérico sobre "${secretData.cat}".
+                    4. Responde SOLAMENTE con tu palabra pista. Nada más.`;
+                }
+
+                const response = await AI.generate(systemPrompt);
+                
+                // Si la IA falla totalmente (API down), usamos un fallback interno
+                if (!response) {
+                    const fallbacks = ["Interesante", "Dudoso", "Posible", "Quizás", "Mmm"];
+                    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+                }
+                
+                return response;
             }
 
             async vote(players, history) {
+                if (this.isHuman) return null; // El humano vota por UI
+
+                // Prompt de votación
                 const candidates = players.filter(p => p.id !== this.id && !p.eliminated);
-                const candidatesNames = candidates.map(p => p.name).join(', ');
+                const candidatesList = candidates.map(p => `${p.name} (ID: ${p.id})`).join(", ");
+                const historyText = history.map(h => `[${h.player}]: ${h.text}`).join("\n");
+
+                const prompt = `Analiza este juego de 'El Impostor'.
+                Historial del chat:
+                ${historyText}
                 
-                const prompt = `Fase de Votación. Eres ${this.role}.
-                Historial: ${history.map(h => `${h.user}: "${h.text}"`).join(' | ')}.
-                Jugadores: ${candidatesNames}.
-                ¿Quién es el impostor? Si eres impostor, acusa a un inocente.
-                Responde SOLO con el nombre del jugador a votar. Nada más.`;
+                Jugadores vivos: ${candidatesList}.
+                
+                Tu rol: ${this.role}.
+                TAREA: ¿Quién es el más sospechoso (impostor) o a quién quieres eliminar?
+                Responde SOLAMENTE con el ID numérico del jugador que votas. Ejemplo: "2"`;
 
-                try {
-                    let voteName = await this.callAI(prompt);
-                    // Buscar coincidencia en nombres
-                    let target = candidates.find(p => voteName.includes(p.name));
-                    if (!target) target = candidates[Math.floor(Math.random() * candidates.length)];
-                    return { target: target.id, reason: "Comportamiento sospechoso detectado por modelo " + this.modelName };
-                } catch (e) {
-                    return { target: candidates[0].id, reason: "Voto aleatorio (Error API)" };
-                }
-            }
-
-            async callAI(prompt) {
-                // Usando Pollinations API como endpoint de texto directo
-                // Añadimos un timestamp para evitar caché
-                const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?seed=${Math.floor(Math.random()*1000)}`;
-                const res = await fetch(url);
-                if (!res.ok) throw new Error("API Error");
-                return await res.text();
-            }
-
-            cleanResponse(text) {
-                // Limpiar basura común de LLMs
-                let clean = text.replace(/["'{}]/g, '').replace(/Aquí tienes.*/i, '').trim();
-                if (clean.length > 50) clean = clean.substring(0, 50) + "..."; // Cortar si se enrolla
-                return clean;
-            }
-
-            fallbackResponse() {
-                const fallbacks = ["Interesante...", "No estoy seguro", "Podría ser...", "Mmm...", "Claro que sí"];
-                return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+                const vote = await AI.generate(prompt);
+                // Extraer solo el número
+                const targetId = parseInt(vote.replace(/\D/g, ''));
+                
+                // Validar voto
+                const target = candidates.find(p => p.id === targetId);
+                return target ? target.id : candidates[0].id; // Fallback al primero si la IA alucina
             }
         }
 
-        // CONTROLADOR DE JUEGO
-        const game = {
+        // --- MOTOR DEL JUEGO ---
+        const Game = {
             players: [],
             history: [],
             round: 1,
+            maxRounds: 3,
             secretData: null,
             isSpectator: false,
-            humanPlayer: null,
+            humanResolve: null,
+            turnIdx: 0,
 
-            start: function(spectatorMode) {
+            init(spectatorMode) {
                 this.isSpectator = spectatorMode;
-                this.players = [];
+                this.secretData = DB[Math.floor(Math.random() * DB.length)];
                 this.history = [];
                 this.round = 1;
-                this.secretData = CONFIG.db[Math.floor(Math.random() * CONFIG.db.length)];
+                this.players = [];
 
-                // Asignar roles aleatorios
-                let roles = [...CONFIG.roles].sort(() => Math.random() - 0.5);
-                
-                // Crear jugadores
-                CONFIG.botNames.forEach((conf, i) => {
-                    let p = new BotPlayer(conf, roles[i], this);
-                    
-                    // Si hay humano, reemplaza al primer bot
-                    if (!spectatorMode && i === 0) {
-                        p.isHuman = true;
-                        p.name = "TÚ (Humano)";
-                        p.modelName = "Cerebro Humano";
-                        this.humanPlayer = p;
-                    }
-                    this.players.push(p);
-                });
+                // Crear 5 jugadores
+                const names = ["Alpha", "Beta", "Gamma", "Delta", "Omega"];
+                let roles = ["civil", "civil", "civil", "civil", "impostor"].sort(() => Math.random() - 0.5);
 
-                ui.initScreen(this.players);
+                for (let i = 0; i < 5; i++) {
+                    const isHuman = (!spectatorMode && i === 0);
+                    const name = isHuman ? "TÚ" : names[i];
+                    this.players.push(new Player(i, name, isHuman, roles[i]));
+                }
+
+                UI.setupGameScreen();
                 this.runGameLoop();
             },
 
-            runGameLoop: async function() {
-                ui.updateInfo(this.round, this.secretData, this.isSpectator, this.humanPlayer);
+            async runGameLoop() {
+                UI.showScreen('screen-game');
+                UI.updateSecretInfo();
+                UI.renderPlayers();
 
-                for (let r = 1; r <= 3; r++) {
+                for (let r = 1; r <= this.maxRounds; r++) {
                     this.round = r;
-                    document.getElementById('round-display').innerText = `${r}/3`;
-                    
-                    // Orden de turno
-                    for (const p of this.players) {
-                        ui.highlightPlayer(p.id);
+                    document.getElementById('round-idx').textContent = r;
+                    UI.addSystemMessage(`--- INICIO RONDA ${r} ---`);
+
+                    // Mezclar orden ligeramente para variar (pero mantener humano primero si es jugador para UX)
+                    let turnOrder = [...this.players].filter(p => !p.eliminated);
+                    if (this.isSpectator) turnOrder.sort(() => Math.random() - 0.5);
+
+                    for (const player of turnOrder) {
+                        UI.highlightPlayer(player.id);
                         
-                        let text = "";
-                        if (p.isHuman) {
-                            text = await ui.waitForHumanInput();
+                        // "Pensando..."
+                        if (!player.isHuman) {
+                            UI.setTyping(player.id, true);
+                            await new Promise(res => setTimeout(res, Math.random() * 2000 + 1000)); // Delay "humano"
                         } else {
-                            ui.setTyping(p.id, true);
-                            text = await p.turn(this.round, this.history);
-                            ui.setTyping(p.id, false);
-                            ui.logDebug(`[${p.name} - ${p.role}]: ${text}`);
+                            UI.enableHumanInput(true);
                         }
 
-                        this.history.push({ user: p.name, text: text, role: p.role });
-                        ui.addMessage(p, text);
+                        // Generar turno
+                        const text = await player.playTurn(this.round, this.history, this.secretData);
                         
-                        await new Promise(res => setTimeout(res, 1500)); // Ritmo de lectura
+                        // Post-turno
+                        UI.setTyping(player.id, false);
+                        UI.enableHumanInput(false);
+                        
+                        if (player.isHuman && !text) continue; // Manejo de error
+
+                        // Registrar y mostrar
+                        this.history.push({ player: player.name, text: text, role: player.role });
+                        UI.addChatMessage(player, text);
+                        
+                        if (this.isSpectator) UI.logDebug(`${player.name} (${player.role}): "${text}"`, true);
+
+                        await new Promise(res => setTimeout(res, 1000)); // Pausa lectura
                     }
                 }
 
-                this.resolveVoting();
+                this.startVoting();
             },
 
-            humanSubmit: function() {
-                const val = document.getElementById('human-input').value;
-                if (val.trim()) ui.resolveHuman(val);
-                document.getElementById('human-input').value = "";
+            handleHumanInput() {
+                const input = document.getElementById('human-input');
+                const val = input.value.trim();
+                if (val && this.humanResolve) {
+                    this.humanResolve(val);
+                    input.value = "";
+                }
             },
 
-            resolveVoting: async function() {
-                ui.showScreen('screen-voting');
-                ui.renderVoting(this.players);
-
-                const votes = {};
-                const alive = this.players; // Todos votan
-
-                for (const p of alive) {
-                    if (p.isHuman) {
-                        // Esperar voto click en UI
-                        await new Promise(r => this.humanVoteResolver = r);
+            async startVoting() {
+                UI.showScreen('screen-voting');
+                const container = document.getElementById('voting-grid');
+                container.innerHTML = '';
+                const alive = this.players.filter(p => !p.eliminated);
+                
+                // Crear tarjetas de votación
+                alive.forEach(p => {
+                    const btn = document.createElement('div');
+                    btn.className = `bg-gray-800 p-6 rounded-xl cursor-pointer hover:bg-gray-700 hover:border-cyan-500 border-2 border-transparent transition-all flex flex-col items-center gap-2`;
+                    btn.innerHTML = `<div class="text-3xl font-bold" style="color:${p.avatarColor}">${p.name.charAt(0)}</div><div class="font-bold">${p.name}</div>`;
+                    
+                    if (!this.isSpectator && this.players[0].id === p.id) {
+                        btn.style.opacity = "0.5"; // No te puedes votar a ti mismo (visual)
+                        btn.style.cursor = "not-allowed";
                     } else {
-                        const v = await p.vote(alive, this.history);
-                        ui.logDebug(`${p.name} vota a ${v.target}`);
-                        votes[v.target] = (votes[v.target] || 0) + 1;
+                        btn.onclick = () => this.resolveVoting(p.id);
                     }
+                    container.appendChild(btn);
+                });
+
+                if (this.isSpectator) {
+                    // Simular votación automática tras unos segundos
+                    UI.logVoting("Las IAs están deliberando...");
+                    await new Promise(r => setTimeout(r, 3000));
+                    this.resolveVoting(null); // Null dispara votación IA automática
+                } else {
+                    UI.logVoting("Selecciona al impostor para votar.");
+                }
+            },
+
+            async resolveVoting(humanVoteId) {
+                const alive = this.players.filter(p => !p.eliminated);
+                const votes = {};
+
+                // Recoger votos
+                for (const p of alive) {
+                    let votedId;
+                    if (p.isHuman) {
+                        votedId = humanVoteId;
+                    } else {
+                        votedId = await p.vote(this.players, this.history);
+                    }
+                    
+                    votes[votedId] = (votes[votedId] || 0) + 1;
+                    const targetName = this.players.find(pl => pl.id === votedId)?.name || "Nadie";
+                    UI.logVoting(`${p.name} votó a ${targetName}`);
                 }
 
-                // Contar votos
-                let max = 0;
+                // Calcular eliminado
+                let maxVotes = 0;
                 let eliminatedId = null;
-                for (let [id, count] of Object.entries(votes)) {
-                    if (count > max) { max = count; eliminatedId = id; }
-                }
+                Object.entries(votes).forEach(([id, count]) => {
+                    if (count > maxVotes) {
+                        maxVotes = count;
+                        eliminatedId = parseInt(id);
+                    }
+                });
 
                 this.endGame(eliminatedId);
             },
 
-            handleHumanVoteCard: function(id) {
-                if (this.humanVoteResolver) this.humanVoteResolver();
-            },
-
-            endGame: function(eliminatedId) {
+            endGame(eliminatedId) {
                 const eliminated = this.players.find(p => p.id === eliminatedId);
                 const impostor = this.players.find(p => p.role === 'impostor');
                 
-                const impostorCaught = eliminated && eliminated.role === 'impostor';
-                const won = this.isSpectator ? impostorCaught : (this.humanPlayer.role === 'impostor' ? !impostorCaught : impostorCaught);
+                UI.showScreen('screen-result');
+                
+                const title = document.getElementById('result-title');
+                const msg = document.getElementById('result-msg');
+                const icon = document.getElementById('result-icon');
+                
+                const impostorEliminated = eliminated && eliminated.role === 'impostor';
+                const playerWon = this.isSpectator ? impostorEliminated : (this.players[0].role === 'civil' ? impostorEliminated : !impostorEliminated);
 
-                ui.showEnd(won, impostorCaught, eliminated, impostor, this.secretData.word);
+                if (impostorEliminated) {
+                    title.innerText = "¡IMPOSTOR CAZADO!";
+                    title.className = "text-5xl md:text-7xl font-black mb-4 text-green-500 glow-text";
+                    msg.innerText = `${eliminated.name} era el impostor. ¡Los civiles ganan!`;
+                    icon.innerText = "👮";
+                } else {
+                    title.innerText = "EL IMPOSTOR GANA";
+                    title.className = "text-5xl md:text-7xl font-black mb-4 text-pink-500 glow-text";
+                    msg.innerText = `Eliminasteis a ${eliminated ? eliminated.name : 'nadie'} (Inocente). El impostor era ${impostor.name}.`;
+                    icon.innerText = "🔪";
+                }
+
+                document.getElementById('result-word').innerText = this.secretData.word;
+                document.getElementById('result-impostor').innerText = `Impostor: ${impostor.name} (ID: ${impostor.id})`;
             }
         };
 
-        // UI MANAGER
-        const ui = {
-            initScreen: function(players) {
-                document.getElementById('screen-start').classList.remove('active');
-                document.getElementById('screen-game').classList.add('active');
-                document.getElementById('debug-box').classList.remove('hidden');
-                
+        // --- GESTOR DE UI ---
+        const UI = {
+            setupGameScreen() {
+                document.getElementById('chat-container').innerHTML = '';
+                document.getElementById('debug-console').innerHTML = '';
+            },
+
+            showScreen(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            },
+
+            updateSecretInfo() {
+                const isCivil = (!Game.isSpectator && Game.players[0].role === 'civil');
+                const isImpostor = (!Game.isSpectator && Game.players[0].role === 'impostor');
+                const container = document.getElementById('secret-container');
+                const wordEl = document.getElementById('secret-word');
+                const hintEl = document.getElementById('secret-hint');
+
+                if (Game.isSpectator || isCivil) {
+                    container.classList.remove('hidden');
+                    wordEl.textContent = Game.secretData.word;
+                    wordEl.className = "text-2xl font-black text-cyan-400 glow-text";
+                    hintEl.classList.remove('hidden');
+                    hintEl.textContent = `Categoría: ${Game.secretData.cat}`;
+                } else if (isImpostor) {
+                    container.classList.remove('hidden');
+                    wordEl.textContent = "???";
+                    wordEl.className = "text-2xl font-black text-red-500 glow-text";
+                    hintEl.classList.remove('hidden');
+                    hintEl.textContent = `Eres IMPOSTOR. Cat: ${Game.secretData.cat}`;
+                }
+            },
+
+            renderPlayers() {
                 const list = document.getElementById('players-list');
-                list.innerHTML = players.map(p => `
-                    <div id="p-card-${p.id}" class="card p-3 flex items-center gap-3 transition-all duration-300">
-                        <div class="avatar ${p.colorClass} text-sm">${p.name.substring(0,1)}</div>
+                list.innerHTML = Game.players.map(p => `
+                    <div id="p-card-${p.id}" class="bg-gray-900/50 border border-gray-700 rounded-lg p-3 flex items-center gap-3 transition-all">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-black" style="background-color: ${p.avatarColor}">
+                            ${p.name.charAt(0)}
+                        </div>
                         <div class="flex-1">
-                            <div class="font-bold text-sm flex justify-between">
-                                ${p.name} 
-                                <span class="text-[10px] bg-white/10 px-2 rounded text-gray-400">${p.modelName}</span>
+                            <div class="text-sm font-bold text-white flex justify-between">
+                                ${p.name}
+                                ${Game.isSpectator ? `<span class="role-badge ${p.role === 'impostor' ? 'role-impostor' : 'role-civil'}">${p.role}</span>` : ''}
                             </div>
-                            <div class="text-xs text-green-500 h-4" id="typing-${p.id}"></div>
+                            <div class="text-[10px] text-gray-500">${p.modelName}</div>
+                            <div id="typing-${p.id}" class="h-2 mt-1 hidden">
+                                <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+                            </div>
                         </div>
                     </div>
                 `).join('');
-                document.getElementById('conversation-log').innerHTML = '';
             },
 
-            updateInfo: function(round, data, isSpec, human) {
-                const secretPanel = document.getElementById('secret-panel');
-                const wordDisplay = document.getElementById('secret-word-display');
-                const catHint = document.getElementById('secret-category-hint');
-
-                let showWord = isSpec || (human && human.role === 'civil');
-                let showCat = isSpec || (human && human.role === 'impostor');
-
-                if (showWord) {
-                    secretPanel.classList.remove('hidden');
-                    wordDisplay.innerText = data.word;
-                    wordDisplay.className = "font-display text-3xl font-black text-cyan-400";
-                    catHint.innerText = `Categoría: ${data.cat}`;
-                } else if (showCat) {
-                    secretPanel.classList.remove('hidden');
-                    wordDisplay.innerText = data.cat;
-                    wordDisplay.className = "font-display text-3xl font-black text-pink-500";
-                    catHint.innerText = "Eres el Impostor. No sabes la palabra.";
-                }
-            },
-
-            highlightPlayer: function(id) {
+            highlightPlayer(id) {
                 document.querySelectorAll('[id^="p-card-"]').forEach(el => {
-                    el.classList.remove('border-white', 'bg-white/10');
+                    el.classList.remove('border-cyan-500', 'bg-gray-800');
                     el.style.transform = "scale(1)";
                 });
                 const card = document.getElementById(`p-card-${id}`);
-                if(card) {
-                    card.classList.add('border-white', 'bg-white/10');
+                if (card) {
+                    card.classList.add('border-cyan-500', 'bg-gray-800');
                     card.style.transform = "scale(1.02)";
+                    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
                 }
             },
 
-            setTyping: function(id, state) {
+            setTyping(id, state) {
                 const el = document.getElementById(`typing-${id}`);
-                if(el) el.innerText = state ? "Escribiendo..." : "";
+                if (el) state ? el.classList.remove('hidden') : el.classList.add('hidden');
             },
 
-            addMessage: function(player, text) {
-                const log = document.getElementById('conversation-log');
-                const isUser = player.isHuman;
+            addChatMessage(player, text) {
+                const container = document.getElementById('chat-container');
+                const isSelf = (!Game.isSpectator && player.id === 0);
                 
-                const html = `
-                <div class="flex items-start mb-4 ${isUser ? 'flex-row-reverse' : ''}">
-                    <div class="avatar ${player.colorClass} w-10 h-10 text-xs shrink-0">${player.name.substring(0,1)}</div>
-                    <div class="bubble ${isUser ? 'bg-blue-900/50 border-blue-500/30' : ''}">
-                        <div class="text-xs text-gray-400 mb-1 font-bold uppercase tracking-wider">${player.name}</div>
-                        <p class="text-lg leading-snug">${text}</p>
-                    </div>
-                </div>`;
-                
-                log.insertAdjacentHTML('beforeend', html);
-                log.scrollTop = log.scrollHeight;
-            },
-
-            waitForHumanInput: function() {
-                const area = document.getElementById('human-input-area');
-                area.classList.remove('hidden');
-                document.getElementById('human-input').focus();
-                return new Promise(resolve => { this.resolveHuman = resolve; });
-            },
-
-            resolveHuman: function(val) {
-                document.getElementById('human-input-area').classList.add('hidden');
-                if (this.resolveHuman) this.resolveHuman(val);
-            },
-
-            renderVoting: function(players) {
-                document.getElementById('screen-game').classList.remove('active');
-                document.getElementById('screen-voting').classList.add('active');
-                
-                const container = document.getElementById('voting-container');
-                container.innerHTML = players.map(p => `
-                    <div onclick="game.handleHumanVoteCard('${p.id}')" class="card p-6 flex flex-col items-center cursor-pointer hover:bg-red-500/20 hover:border-red-500 transition-all">
-                        <div class="avatar ${p.colorClass} mb-3 text-2xl">${p.name.substring(0,1)}</div>
-                        <div class="font-bold">${p.name}</div>
-                    </div>
-                `).join('');
-            },
-
-            showEnd: function(won, impostorCaught, eliminated, impostor, word) {
-                document.getElementById('screen-voting').classList.remove('active');
-                document.getElementById('screen-result').classList.add('active');
-                
-                const title = document.getElementById('winner-title');
-                const desc = document.getElementById('winner-desc');
-                
-                if (impostorCaught) {
-                    title.innerText = "¡IMPOSTOR ELIMINADO!";
-                    title.classList.add('text-green-500');
-                    desc.innerText = `${eliminated.name} era el impostor. ¡Victoria Civil!`;
-                } else {
-                    title.innerText = "¡IMPOSTOR GANA!";
-                    title.classList.add('text-pink-500');
-                    desc.innerText = `Eliminasteis a ${eliminated ? eliminated.name : 'nadie'}. El impostor era ${impostor.name}.`;
+                // Determinar estilo de burbuja (solo espectador ve colores de rol)
+                let bubbleClass = "bg-gray-800";
+                if (Game.isSpectator) {
+                    bubbleClass = player.role === 'impostor' ? 'bubble-impostor' : 'bubble-civil';
+                } else if (isSelf) {
+                    bubbleClass = "bg-cyan-900/40 border border-cyan-700";
                 }
-                
-                document.getElementById('final-word').innerText = word;
+
+                const div = document.createElement('div');
+                div.className = `flex flex-col ${isSelf ? 'items-end' : 'items-start'} mb-4`;
+                div.innerHTML = `
+                    <div class="text-[10px] text-gray-400 mb-1 ml-1">${player.name}</div>
+                    <div class="chat-bubble ${bubbleClass} text-sm md:text-base">
+                        ${text}
+                    </div>
+                `;
+                container.appendChild(div);
+                container.scrollTop = container.scrollHeight;
             },
 
-            logDebug: function(msg) {
-                const log = document.getElementById('debug-log');
+            addSystemMessage(text) {
+                const container = document.getElementById('chat-container');
+                container.innerHTML += `<div class="text-center text-[10px] font-mono text-gray-600 my-4 uppercase tracking-widest">${text}</div>`;
+            },
+
+            enableHumanInput(enable) {
+                const controls = document.getElementById('human-controls');
+                if (enable) {
+                    controls.classList.remove('hidden');
+                    document.getElementById('human-input').focus();
+                } else {
+                    controls.classList.add('hidden');
+                }
+            },
+
+            logDebug(msg, success) {
+                const consoleEl = document.getElementById('debug-console');
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${success ? 'log-success' : 'log-error'}`;
+                entry.textContent = `> ${msg}`;
+                consoleEl.appendChild(entry);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            },
+
+            logVoting(msg) {
+                const log = document.getElementById('voting-log');
+                log.classList.remove('hidden');
                 log.innerHTML += `<div>> ${msg}</div>`;
                 log.scrollTop = log.scrollHeight;
             }
