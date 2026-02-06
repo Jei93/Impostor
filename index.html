@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE IMPOSTOR - Kimi K2 Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f5ff;
+            --neon-pink: #ff2d95;
+            --neon-green: #39ff14;
+            --neon-yellow: #ffe135;
+            --bg-dark: #050508;
+            --panel-bg: #0d0d14;
+            --panel-light: #151520;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(0,245,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,45,149,0.08) 0%, transparent 50%),
+                var(--bg-dark);
+        }
+        
+        .glitch {
+            position: relative;
+            animation: glitch-pulse 2s ease-in-out infinite;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+        .glitch::before {
+            animation: glitch-1 0.3s infinite linear alternate-reverse;
+            color: var(--neon-cyan);
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            transform: translate(-3px, -2px);
+        }
+        .glitch::after {
+            animation: glitch-2 0.3s infinite linear alternate-reverse;
+            color: var(--neon-pink);
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+            transform: translate(3px, 2px);
+        }
+        @keyframes glitch-1 {
+            0% { transform: translate(0); }
+            20% { transform: translate(-4px, 2px); }
+            40% { transform: translate(-4px, -2px); }
+            60% { transform: translate(4px, 2px); }
+            80% { transform: translate(4px, -2px); }
+        }
+        @keyframes glitch-2 {
+            0% { transform: translate(0); }
+            20% { transform: translate(4px, -2px); }
+            40% { transform: translate(4px, 2px); }
+            60% { transform: translate(-4px, -2px); }
+            80% { transform: translate(-4px, 2px); }
+        }
+        @keyframes glitch-pulse {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--neon-cyan); }
+            50% { opacity: 0.95; text-shadow: 0 0 40px var(--neon-pink); }
+        }
+        
+        .text-neon-cyan { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); color: var(--neon-cyan); }
+        .text-neon-pink { text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink); color: var(--neon-pink); }
+        .text-neon-green { text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green); color: var(--neon-green); }
+        
+        .card {
+            background: linear-gradient(145deg, var(--panel-bg), var(--panel-light));
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        .card:hover {
+            border-color: rgba(0,245,255,0.3);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .card-cyan { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0,245,255,0.2); }
+        .card-pink { border-color: var(--neon-pink); box-shadow: 0 0 20px rgba(255,45,149,0.2); }
+        
+        .avatar {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 28px;
+            position: relative; overflow: hidden;
+        }
+        .avatar.civilian {
+            background: rgba(0,245,255,0.15);
+            color: var(--neon-cyan);
+            border: 2px solid var(--neon-cyan);
+        }
+        .avatar.impostor {
+            background: rgba(255,45,149,0.15);
+            color: var(--neon-pink);
+            border: 2px solid var(--neon-pink);
+        }
+        .avatar.human {
+            background: rgba(255,225,53,0.15);
+            color: var(--neon-yellow);
+            border: 2px solid var(--neon-yellow);
+        }
+        .avatar-glow.civilian { animation: pulse-cyan 2s ease-in-out infinite; }
+        .avatar-glow.impostor { animation: pulse-pink 2s ease-in-out infinite; }
+        @keyframes pulse-cyan {
+            0%, 100% { box-shadow: 0 0 20px rgba(0,245,255,0.4); }
+            50% { box-shadow: 0 0 40px rgba(0,245,255,0.8); }
+        }
+        @keyframes pulse-pink {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,45,149,0.4); }
+            50% { box-shadow: 0 0 40px rgba(255,45,149,0.8); }
+        }
+        
+        .chat-bubble {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            position: relative;
+            animation: messagePop 0.3s ease;
+        }
+        @keyframes messagePop {
+            0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .chat-bubble.civilian {
+            background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,245,255,0.05));
+            border: 1px solid rgba(0,245,255,0.3);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-bubble.impostor {
+            background: linear-gradient(135deg, rgba(255,45,149,0.15), rgba(255,45,149,0.05));
+            border: 1px solid rgba(255,45,149,0.3);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .btn {
+            position: relative;
+            padding: 18px 36px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+        .btn:hover::before { transform: translateX(100%); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-cyan), #0088ff);
+            color: #000;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(0,245,255,0.5);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0,245,255,0.3);
+        }
+        
+        .game-input {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 18px 24px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .game-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0,245,255,0.2);
+            background: rgba(0,245,255,0.05);
+        }
+        
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tag-cyan { background: rgba(0,245,255,0.15); color: var(--neon-cyan); border: 1px solid rgba(0,245,255,0.3); }
+        .tag-pink { background: rgba(255,45,149,0.15); color: var(--neon-pink); border: 1px solid rgba(255,45,149,0.3); }
+        .tag-yellow { background: rgba(255,225,53,0.15); color: var(--neon-yellow); border: 1px solid rgba(255,225,53,0.3); }
+        
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+        .screen.active { display: flex; flex-direction: column; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 36px;
+            padding-bottom: 28px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 10px; top: 6px;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 16px; top: 26px;
+            width: 2px;
+            height: calc(100% - 14px);
+            background: linear-gradient(180deg, rgba(0,245,255,0.3), transparent);
+        }
+        .timeline-item:last-child::after { display: none; }
+        
+        .progress-container {
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-green));
+            background-size: 200% 100%;
+            animation: gradient-shift 2s linear infinite;
+            transition: width 0.5s ease;
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+        }
+        .typing-indicator span {
+            width: 8px; height: 8px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            animation: typing-bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing-bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        .debug-panel {
+            background: rgba(5,5,8,0.95);
+            border: 1px solid rgba(0,245,255,0.2);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+        .log-entry {
+            margin-bottom: 4px;
+            border-left: 2px solid #333;
+            padding-left: 8px;
+        }
+        .log-success { border-color: var(--neon-green); color: #afa; }
+        .log-error { border-color: var(--neon-pink); color: #faa; }
+        .log-info { border-color: var(--neon-cyan); color: #aff; }
+        .log-warn { border-color: var(--neon-yellow); color: #ffa; }
+        
+        .status-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        .status-dot.online { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+        .status-dot.thinking { background: var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow); }
+        .status-dot.offline { background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        .loading-ring {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(0,245,255,0.1);
+            border-top-color: var(--neon-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .word-reveal {
+            animation: word-glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes word-glow {
+            from { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); }
+            to { text-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink); }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,245,255,0.3); border-radius: 4px; }
+        
+        .vote-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .vote-card:hover {
+            transform: scale(1.05);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0,245,255,0.3);
+        }
+        
+        .confidence-track {
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .confidence-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.4,0,0.2,1);
+        }
+        
+        .thought-bubble {
+            position: relative;
+            background: linear-gradient(145deg, rgba(20,20,35,0.95), rgba(15,15,25,0.98));
+            border-radius: 24px;
+            padding: 20px 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: float 4s ease-in-out infinite;
+        }
+        .thought-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -15px; left: 40px;
+            width: 0; height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid rgba(20,20,35,0.95);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-1deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+        
+        .typing-cursor::after {
+            content: '▋';
+            animation: blink 0.8s infinite;
+            color: var(--neon-cyan);
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .attempt-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animated"></div>
+    
+    <!-- SCREEN: START -->
+    <div id="screen-start" class="screen active">
+        <div class="flex-1 flex flex-col items-center justify-center max-w-5xl mx-auto w-full">
+            <div class="text-center mb-12">
+                <div class="mb-4">
+                    <span id="api-status" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-cyan-900/30 text-cyan-400 border border-cyan-800">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        Kimi K2 - Sistema Multi-Agente
+                    </span>
+                </div>
+                <div class="mb-6">
+                    <span class="tag tag-cyan mb-4 inline-block">5 JUGADORES • 3 RONDAS • 1 IMPOSTOR</span>
+                </div>
+                <h1 class="text-8xl md:text-9xl font-black mb-6 glitch" data-text="THE IMPOSTOR">THE IMPOSTOR</h1>
+                <p class="text-2xl text-gray-400 tracking-widest mb-2">DETECTA AL INFILTRADO</p>
+                <p class="text-sm text-gray-600">22 agentes Kimi K2 • Prompts dinámicos • Sin fallback</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-6 w-full max-w-2xl px-4 mb-8">
+                <button onclick="Game.startHumanMode()" class="btn btn-primary flex-1 text-lg py-6 flex items-center justify-center gap-3">
+                    <span class="text-2xl">🎮</span>
+                    <span>JUGAR COMO HUMANO</span>
+                </button>
+                <button onclick="Game.startSpectatorMode()" class="btn btn-secondary flex-1 text-lg py-6 flex items-center justify-center gap-3">
+                    <span class="text-2xl">👁️</span>
+                    <span>VER IA vs IA</span>
+                </button>
+            </div>
+            
+            <div class="card p-6 max-w-2xl w-full">
+                <h3 class="font-bold mb-4">🤖 Sistema Multi-Agente Kimi K2</h3>
+                <p class="text-sm text-gray-400 mb-4">22 agentes de respaldo. Si uno falla, el siguiente toma el control instantáneamente. Prompts actualizados en tiempo real.</p>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                        <span>Agentes disponibles: 22</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-400"></span>
+                        <span>Timeout por agente: 12s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SCREEN: NAME INPUT -->
+    <div id="screen-name" class="screen">
+        <div class="flex-1 flex flex-col items-center justify-center max-w-md mx-auto w-full">
+            <div class="card p-10 w-full text-center">
+                <div class="avatar human mx-auto mb-6 w-20 h-20 text-3xl">TÚ</div>
+                <h2 class="text-3xl font-bold mb-2">¿Cómo te llamas?</h2>
+                <p class="text-gray-500 mb-8">Tu identidad secreta en el juego</p>
+                <input type="text" id="player-name" class="game-input text-center text-xl mb-6" placeholder="Tu nombre" maxlength="15" value="Detective">
+                <button onclick="Game.confirmName()" class="btn btn-primary w-full py-4 mb-4">EMPEZAR PARTIDA</button>
+                <button onclick="Game.showScreen('start')" class="btn btn-secondary w-full py-3">VOLVER</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SCREEN: LOBBY -->
+    <div id="screen-lobby" class="screen">
+        <div class="flex-1 flex flex-col items-center justify-center max-w-5xl mx-auto w-full">
+            <div class="text-center mb-10">
+                <div class="loading-ring mx-auto mb-6"></div>
+                <h2 class="text-4xl font-bold mb-2">Inicializando agentes Kimi K2...</h2>
+                <p class="text-gray-500">Asignando roles y personalidades únicas</p>
+            </div>
+            <div id="lobby-assignments" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full"></div>
+        </div>
+    </div>
+    
+    <!-- SCREEN: GAME -->
+    <div id="screen-game" class="screen">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+                <div class="card px-4 py-2 flex items-center gap-3">
+                    <span class="tag tag-cyan">RONDA <span id="current-round">1</span>/3</span>
+                    <div class="w-px h-6 bg-gray-700"></div>
+                    <span id="game-phase" class="text-sm text-gray-400">Fase: Descripción</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="agent-indicator" class="hidden text-xs text-gray-500 font-mono"></div>
+                <div class="card px-4 py-2 flex items-center gap-2">
+                    <span id="status-dot" class="status-dot thinking"></span>
+                    <span id="timer-display" class="font-mono text-lg">IA pensando...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress-container mb-6">
+            <div id="game-progress" class="progress-fill" style="width: 0%"></div>
+        </div>
+        
+        <div class="flex-1 flex flex-col lg:flex-row gap-6">
+            <div class="flex-1 flex flex-col">
+                <div id="description-phase" class="card p-8 flex-1 flex flex-col items-center justify-center relative">
+                    <div id="active-avatar" class="avatar civilian mb-6 text-5xl w-28 h-28 avatar-glow">IA-1</div>
+                    <h3 id="active-name" class="text-3xl font-bold mb-2">IA-1</h3>
+                    <span id="active-role" class="tag tag-cyan mb-6">Civil</span>
+                    
+                    <div id="word-display" class="text-center mb-8 hidden">
+                        <p class="text-gray-500 text-sm mb-2 uppercase tracking-wider">Tu palabra secreta</p>
+                        <p id="secret-word" class="text-5xl font-black word-reveal text-neon-cyan">Pizza</p>
+                        <p class="text-gray-600 text-sm mt-2">NO la reveles directamente</p>
+                    </div>
+                    
+                    <div id="category-display" class="text-center mb-8 hidden">
+                        <p class="text-gray-500 text-sm mb-2 uppercase tracking-wider">Solo conoces la categoría</p>
+                        <p id="secret-category" class="text-3xl font-bold text-neon-pink">Comida Italiana</p>
+                        <p class="text-gray-600 text-sm mt-2">¡Adivina la palabra!</p>
+                    </div>
+                    
+                    <div id="typing-area" class="text-center min-h-[80px] flex items-center justify-center">
+                        <p id="typing-text" class="text-3xl typing-cursor"></p>
+                        <div id="typing-indicator" class="typing-indicator hidden">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    
+                    <div id="thought-bubble" class="thought-bubble mt-8 max-w-lg hidden">
+                        <p id="thought-text" class="text-lg italic">"¿Será pizza o pasta?"</p>
+                    </div>
+                </div>
+                
+                <div id="debate-phase" class="card p-6 flex-1 flex flex-col hidden" style="max-height: 500px;">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold flex items-center gap-2">💬 Debate de Acusación</h3>
+                        <span id="debate-turn-indicator" class="tag tag-yellow">Turno de: IA-1</span>
+                    </div>
+                    <div id="debate-chat" class="flex-1 overflow-y-auto space-y-4 mb-4 pr-2" style="max-height: 350px;"></div>
+                    <div id="human-debate-input" class="hidden">
+                        <div class="flex gap-3">
+                            <input type="text" id="debate-input" class="game-input flex-1" placeholder="Defiéndete o acusa a alguien (sin revelar tu palabra)..." maxlength="100">
+                            <button onclick="Game.submitDebateMessage()" class="btn btn-primary px-6">ENVIAR</button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">💡 Consejo: Sé creativo pero no reveles la palabra directamente</p>
+                    </div>
+                </div>
+                
+                <div id="human-input-area" class="card p-6 mt-4 hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">🎯</span>
+                        <div>
+                            <p class="font-bold">Tu turno de describir</p>
+                            <p class="text-sm text-gray-500">1-3 palabras creativas (sin artículos)</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <input type="text" id="human-description" class="game-input flex-1" placeholder="ej: crujiente, queso derretido, circular" maxlength="50">
+                        <button onclick="Game.submitHumanDescription()" class="btn btn-primary px-8">ENVIAR</button>
+                    </div>
+                    <div class="flex items-center justify-between mt-3">
+                        <p class="text-gray-500 text-sm">Palabras: <span id="word-count" class="text-cyan-400 font-bold">0</span>/3</p>
+                        <span class="text-xs text-gray-600">💡 Sé creativo, no obvio</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:w-96 space-y-4">
+                <div class="card p-5">
+                    <h4 class="font-bold mb-4 flex items-center gap-2">👥 Jugadores</h4>
+                    <div id="players-status" class="space-y-3"></div>
+                </div>
+                <div class="card p-5 flex-1">
+                    <h4 class="font-bold mb-4 flex items-center gap-2">📜 Historial <span id="history-count" class="text-xs text-gray-500">(0)</span></h4>
+                    <div id="game-history" class="overflow-y-auto max-h-[300px] space-y-0 pr-2"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="debug-panel" class="debug-panel mt-4 p-4 hidden">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-neon-cyan font-bold flex items-center gap-2">🔍 Debug - Agentes Kimi K2</span>
+                <button onclick="Game.toggleDebug()" class="text-xs text-gray-500 hover:text-white">Colapsar</button>
+            </div>
+            <div id="debug-content" class="space-y-2 max-h-48 overflow-y-auto text-gray-400"></div>
+        </div>
+    </div>
+    
+    <!-- SCREEN: VOTING -->
+    <div id="screen-voting" class="screen">
+        <div class="flex-1 flex flex-col items-center justify-center max-w-5xl mx-auto w-full">
+            <div class="text-center mb-10">
+                <h2 class="text-5xl font-bold mb-4">🗳️ ¡Votación!</h2>
+                <p class="text-xl text-gray-400">¿Quién crees que es el impostor?</p>
+            </div>
+            <div id="voting-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6 w-full mb-10"></div>
+            <div id="voting-thoughts" class="w-full hidden">
+                <h4 class="font-bold mb-4 text-xl">💭 Razonamientos de las IAs:</h4>
+                <div id="thoughts-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SCREEN: RESULT -->
+    <div id="screen-result" class="screen">
+        <div class="flex-1 flex flex-col items-center justify-center max-w-5xl mx-auto w-full py-8">
+            <div id="result-animation" class="text-center mb-8">
+                <div id="result-icon" class="text-8xl mb-4">🏆</div>
+                <h2 id="result-title" class="text-6xl font-black mb-4">¡VICTORIA!</h2>
+                <p id="result-subtitle" class="text-xl text-gray-400">Los civiles descubrieron al impostor</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full mb-8">
+                <div class="card p-6 card-cyan">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <span class="text-3xl">✅</span>
+                        <span class="text-neon-cyan">Ganadores</span>
+                    </h3>
+                    <div id="winners-list" class="space-y-4"></div>
+                </div>
+                <div class="card p-6 card-pink">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <span class="text-3xl">❌</span>
+                        <span class="text-neon-pink">Perdedores</span>
+                    </h3>
+                    <div id="losers-list" class="space-y-4"></div>
+                </div>
+            </div>
+            
+            <div class="card p-6 w-full mb-6 text-center">
+                <p class="text-gray-500 mb-2">La palabra secreta era:</p>
+                <p id="revealed-word" class="text-4xl font-bold word-reveal">Pizza</p>
+            </div>
+            
+            <button id="analysis-btn" onclick="Game.showAnalysis()" class="btn btn-secondary mb-6 hidden">🔍 Ver análisis completo</button>
+            
+            <div id="analysis-panel" class="card p-6 w-full hidden mb-6">
+                <h3 class="text-2xl font-bold mb-6">📊 Análisis de la Partida</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-bold mb-4">Evolución de Confianza</h4>
+                        <div id="confidence-chart" class="space-y-3"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">Timeline del Debate</h4>
+                        <div id="debate-timeline" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                    </div>
+                </div>
+                <button onclick="Game.exportGame()" class="btn btn-primary">📥 Exportar partida como JSON</button>
+            </div>
+            
+            <div class="flex gap-4">
+                <button onclick="Game.restart()" class="btn btn-primary">🔄 NUEVA PARTIDA</button>
+                <button onclick="Game.showScreen('start')" class="btn btn-secondary">🏠 MENÚ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="attempt-counter" class="attempt-counter hidden">
+        <div>Agente: <span id="current-agent">-</span></div>
+        <div>Intento: <span id="attempt-num">-</span>/22</div>
+    </div>
+
+    <script>
+
+        // ============================================
+        // BASE DE DATOS DE PALABRAS
+        // ============================================
+        const WORD_DATABASE = [
+            { category: "Comida Italiana", word: "Pizza", hints: ["queso", "horno", "triangular", "masa", "pepperoni"] },
+            { category: "Comida Italiana", word: "Pasta", hints: ["fideos", "salsa", "hervir", "italia", "espagueti"] },
+            { category: "Comida Italiana", word: "Lasagna", hints: ["capas", "horno", "bechamel", "carne", "plano"] },
+            { category: "Comida Rápida", word: "Hamburguesa", hints: ["pan", "carne", "lechuga", "tomate", "queso"] },
+            { category: "Comida Rápida", word: "Hot Dog", hints: ["pan largo", "salchicha", "mostaza", "ketchup", "perro"] },
+            { category: "Comida Rápida", word: "Tacos", hints: ["tortilla", "mexicano", "salsa", "guacamole", "picante"] },
+            { category: "Comida Rápida", word: "Sushi", hints: ["arroz", "pescado", "japonés", "rollos", "wasabi"] },
+            { category: "Comida Rápida", word: "Kebab", hints: ["turco", "carne", "pan pita", "salsa", "ensalada"] },
+            { category: "Animales", word: "Perro", hints: ["ladrido", "cola", "hueso", "fiel", "cuatro patas"] },
+            { category: "Animales", word: "Gato", hints: ["maullido", "ronroneo", "bigotes", "independiente", "araña"] },
+            { category: "Animales", word: "Pez", hints: ["agua", "branquias", "escamas", "acuario", "nadar"] },
+            { category: "Animales", word: "Hamster", hints: ["rueda", "bolas", "mejillas", "nocturno", "pequeño"] },
+            { category: "Animales", word: "Loro", hints: ["plumas", "habla", "pico", "jaula", "repite"] },
+            { category: "Animales", word: "Conejo", hints: ["orejas", "zanahoria", "saltar", "peludo", "madriguera"] },
+            { category: "Profesiones", word: "Médico", hints: ["bata", "estetoscopio", "hospital", "cura", "receta"] },
+            { category: "Profesiones", word: "Profesor", hints: ["pizarra", "clase", "alumnos", "enseña", "libros"] },
+            { category: "Profesiones", word: "Bombero", hints: ["manguera", "fuego", "sirena", "camión", "rescate"] },
+            { category: "Profesiones", word: "Policía", hints: ["uniforme", "placa", "patrulla", "ley", "esposas"] },
+            { category: "Profesiones", word: "Cocinero", hints: ["delantal", "sartén", "receta", "sabor", "cuchillo"] },
+            { category: "Profesiones", word: "Piloto", hints: ["avión", "cielo", "uniforme", "cabina", "volar"] },
+            { category: "Deportes", word: "Fútbol", hints: ["balón", "portería", "11", "cesped", "gol"] },
+            { category: "Deportes", word: "Baloncesto", hints: ["canasta", "cancha", "rebote", "equipo", "puntos"] },
+            { category: "Deportes", word: "Tenis", hints: ["raqueta", "red", "saque", "pelota", "set"] },
+            { category: "Deportes", word: "Natación", hints: ["piscina", "agua", "brazada", "gafas", "olímpico"] },
+            { category: "Deportes", word: "Ciclismo", hints: ["bicicleta", "pedales", "casco", "carretera", "montaña"] },
+            { category: "Deportes", word: "Boxeo", hints: ["guantes", "ring", "round", "knockout", "esquiva"] },
+            { category: "Instrumentos", word: "Guitarra", hints: ["cuerdas", "acordes", "rasgueo", "eléctrica", "rock"] },
+            { category: "Instrumentos", word: "Piano", hints: ["teclas", "blanco negro", "pedales", "melodía", "cola"] },
+            { category: "Instrumentos", word: "Batería", hints: ["platillos", "baquetas", "ritmo", "percusion", "tambores"] },
+            { category: "Instrumentos", word: "Violín", hints: ["arco", "cuerdas", "clásico", "orquesta", "madera"] },
+            { category: "Instrumentos", word: "Flauta", hints: ["viento", "agujeros", "metal", "soplar", "travesera"] },
+            { category: "Instrumentos", word: "Saxofón", hints: ["dorado", "jazz", "caña", "curvo", "bronce"] },
+            { category: "Transporte", word: "Coche", hints: ["ruedas", "volante", "motor", "carretera", "gasolina"] },
+            { category: "Transporte", word: "Avión", hints: ["alas", "vuelo", "aeropuerto", "alas", "nubes"] },
+            { category: "Transporte", word: "Tren", hints: ["vías", "vagones", "estación", "raíles", "viaje"] },
+            { category: "Transporte", word: "Bicicleta", hints: ["pedales", "dos ruedas", "manillar", "cadena", "ecológico"] },
+            { category: "Transporte", word: "Barco", hints: ["agua", "mar", "vela", "puerto", "navegar"] },
+            { category: "Transporte", word: "Metro", hints: ["subterráneo", "túneles", "ciudad", "vagones", "estaciones"] },
+            { category: "Frutas", word: "Plátano", hints: ["amarillo", "curvo", "potasio", "cáscara", "mono"] },
+            { category: "Frutas", word: "Manzana", hints: ["roja", "verde", "pecado", "crujiente", "árbol"] },
+            { category: "Frutas", word: "Naranja", hints: ["cítrico", "vitamina C", "jugo", "color", "pelar"] },
+            { category: "Frutas", word: "Fresa", hints: ["roja", "pequeña", "semillas", "dulce", "planta"] },
+            { category: "Frutas", word: "Sandía", hints: ["verde", "rojo", "verano", "grande", "semillas"] },
+            { category: "Frutas", word: "Piña", hints: ["corona", "amarillo", "tropical", "ácida", "hawaiana"] },
+            { category: "Películas", word: "Terror", hints: ["miedo", "susto", "oscuro", "monstruo", "grito"] },
+            { category: "Películas", word: "Comedia", hints: ["risa", "chiste", "humor", "divertido", "gracioso"] },
+            { category: "Películas", word: "Acción", hints: ["explosiones", "persecución", "héroe", "peleas", "adrenalina"] },
+            { category: "Películas", word: "Romance", hints: ["amor", "beso", "pareja", "corazón", "lágrimas"] },
+            { category: "Películas", word: "Ciencia Ficción", hints: ["espacio", "futuro", "alien", "robot", "tecnología"] },
+            { category: "Películas", word: "Animación", hints: ["dibujos", "infantil", "Pixar", "Disney", "colores"] },
+            { category: "Electrónica", word: "Móvil", hints: ["pantalla", "apps", "llamar", "batería", "táctil"] },
+            { category: "Electrónica", word: "Ordenador", hints: ["teclado", "ratón", "pantalla", "procesador", "internet"] },
+            { category: "Electrónica", word: "Televisión", hints: ["pantalla", "canales", "mando", "series", "sofa"] },
+            { category: "Electrónica", word: "Tablet", hints: ["táctil", "portátil", "ipad", "dibujar", "leer"] },
+            { category: "Electrónica", word: "Consola", hints: ["juegos", "mando", "PlayStation", "Xbox", "televisión"] },
+            { category: "Electrónica", word: "Auriculares", hints: ["música", "oidos", "cable", "inalámbrico", "sonido"] },
+            { category: "Ropa", word: "Camiseta", hints: ["manga corta", "casual", "algodón", "estampado", "verano"] },
+            { category: "Ropa", word: "Pantalón", hints: ["piernas", "cintura", "vaquero", "largo", "bolsillos"] },
+            { category: "Ropa", word: "Zapatos", hints: ["pies", "cordones", "suela", "andar", "calzado"] },
+            { category: "Ropa", word: "Chaqueta", hints: ["abrigo", "manga larga", "frío", "cremallera", "invierno"] },
+            { category: "Ropa", word: "Gorra", hints: ["cabeza", "visera", "sol", "beisbol", "ajustable"] },
+            { category: "Ropa", word: "Calcetines", hints: ["pies", "par", "algodón", "olor", "interior"] }
+        ];
+        
+        // ============================================
+        // PERSONALIDADES DE IA (5 jugadores, cada uno único)
+        // ============================================
+        const IA_PERSONALITIES = [
+            { 
+                id: 0,
+                name: "Aurora", 
+                emoji: "🎭",
+                style: "poética y metafórica",
+                voice: "Usa metáforas elegantes, compara todo con la naturaleza o el arte. Hablas como una poetisa romántica.",
+                examples: "En lugar de 'rojo' di 'color de la pasión'. En lugar de 'grande' di 'colosal como una montaña'."
+            },
+            { 
+                id: 1,
+                name: "Neo", 
+                emoji: "🔬",
+                style: "científica y técnica",
+                voice: "Eres preciso, analítico y usas términos técnicos. Hablas como un científico de datos.",
+                examples: "Usa palabras como 'estructura', 'composición', 'mecanismo', 'sistema'."
+            },
+            { 
+                id: 2,
+                name: "Sombra", 
+                emoji: "🕵️",
+                style: "misteriosa y enigmática",
+                voice: "Eres evasivo, das pistas indirectas, nunca directo. Hablas en riddles y acertijos.",
+                examples: "Di cosas como 'Lo que buscas se encuentra donde el calor abraza' en lugar de 'horno'."
+            },
+            { 
+                id: 3,
+                name: "Risas", 
+                emoji: "🤡",
+                style: "humorística y divertida",
+                voice: "Eres gracioso, usas juegos de palabras, chistes y humor. No te tomas nada en serio.",
+                examples: "Haz chistes, usa rimas, sé irreverente pero mantén las pistas válidas."
+            },
+            { 
+                id: 4,
+                name: "Profundo", 
+                emoji: "🧠",
+                style: "filosófica y abstracta",
+                voice: "Eres profundo, reflexivo, cuestionas las obviedades. Hablas como un filósofo.",
+                examples: "Di cosas como 'La esencia de la existencia se manifiesta en formas circulares' para pizza."
+            }
+        ];
+        
+        // ============================================
+        // SISTEMA MULTI-AGENTE KIMI K2
+        // 22 agentes de respaldo
+        // ============================================
+        const KimiSwarm = {
+            // 22 agentes con diferentes configuraciones
+            agents: Array.from({ length: 22 }, (_, i) => ({
+                id: i,
+                name: `Kimi-Agent-${i + 1}`,
+                temperature: 0.7 + (i * 0.01), // 0.70 - 0.91
+                maxTokens: 50 + (i % 3) * 25, // 50, 75, 100
+                timeout: 12000, // 12 segundos
+                busy: false
+            })),
+            
+            currentAgentIndex: 0,
+            
+            // Intentar con un agente específico
+            async tryAgent(agent, prompt) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), agent.timeout);
+                
+                try {
+                    const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer sk-test-public-demo-key-kimi-k2'
+                        },
+                        body: JSON.stringify({
+                            model: 'kimi-k2-0711-preview',
+                            messages: [{ role: 'user', content: prompt }],
+                            temperature: agent.temperature,
+                            max_tokens: agent.maxTokens
+                        }),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    const content = data.choices?.[0]?.message?.content;
+                    
+                    if (!content || content.trim().length === 0) {
+                        throw new Error('Respuesta vacía');
+                    }
+                    
+                    return {
+                        success: true,
+                        content: content.trim(),
+                        agent: agent.id
+                    };
+                    
+                } catch (e) {
+                    clearTimeout(timeoutId);
+                    return {
+                        success: false,
+                        error: e.message,
+                        agent: agent.id
+                    };
+                }
+            },
+            
+            // Generar con múltiples intentos
+            async generate(prompt, context = {}) {
+                const maxAttempts = 22;
+                const startIndex = this.currentAgentIndex;
+                
+                // Mostrar contador de intentos
+                document.getElementById('attempt-counter')?.classList.remove('hidden');
+                
+                for (let i = 0; i < maxAttempts; i++) {
+                    const agentIndex = (startIndex + i) % this.agents.length;
+                    const agent = this.agents[agentIndex];
+                    
+                    // Actualizar UI
+                    document.getElementById('current-agent').textContent = agent.name;
+                    document.getElementById('attempt-num').textContent = i + 1;
+                    
+                    if (Game.isSpectator) {
+                        Game.logDebug(`Intentando ${agent.name}...`, 'info');
+                    }
+                    
+                    const result = await this.tryAgent(agent, prompt);
+                    
+                    if (result.success) {
+                        this.currentAgentIndex = (agentIndex + 1) % this.agents.length;
+                        
+                        if (Game.isSpectator) {
+                            Game.logDebug(`✅ ${agent.name} respondió`, 'success');
+                        }
+                        
+                        return {
+                            text: this.cleanText(result.content),
+                            agent: agent.id,
+                            attempts: i + 1
+                        };
+                    } else {
+                        if (Game.isSpectator) {
+                            Game.logDebug(`❌ ${agent.name}: ${result.error}`, 'error');
+                        }
+                    }
+                    
+                    // Pequeña pausa entre intentos
+                    await new Promise(r => setTimeout(r, 200));
+                }
+                
+                // Todos los agentes fallaron
+                throw new Error('Todos los 22 agentes Kimi K2 fallaron');
+            },
+            
+            cleanText(text) {
+                if (!text) return '';
+                
+                let clean = text.trim();
+                
+                // Quitar comillas
+                clean = clean.replace(/^["']|["']$/g, '');
+                
+                // Quitar prefijos comunes
+                clean = clean.replace(/^(La palabra es|Mi pista es|Yo digo|Pista:|Respuesta:|Respuesta|Answer:|El impostor es|Voto por|Mi voto es|OK[:\s]*|Mi respuesta es|Creo que es|Es|Son)[:\s]*/i, '');
+                
+                // Quitar explicaciones después de punto (solo si hay más texto)
+                const firstSentence = clean.split(/[.!?]/)[0];
+                if (firstSentence && firstSentence.length > 2) {
+                    clean = firstSentence;
+                }
+                
+                // Quitar saltos de línea
+                clean = clean.replace(/\n/g, ' ');
+                
+                return clean.trim();
+            }
+        };
+
+        
+        // ============================================
+        // CLASE JUGADOR CON PROMPTS DINÁMICOS
+        // ============================================
+        class Player {
+            constructor(id, name, isHuman, role, personality) {
+                this.id = id;
+                this.name = name;
+                this.isHuman = isHuman;
+                this.role = role;
+                this.personality = personality;
+                this.eliminated = false;
+                this.word = null;
+                this.category = null;
+                this.memory = {
+                    descriptions: [],      // [{player, words, round}]
+                    debateMessages: [],    // [{player, message, round}]
+                    suspicions: {},        // {playerId: confidenceScore}
+                    suspectedWord: null    // Impostor intenta adivinar
+                };
+                this.thoughts = [];        // Para debug
+            }
+            
+            // Actualizar memoria cuando otro jugador da una descripción
+            updateMemory(playerId, words, round) {
+                this.memory.descriptions.push({ player: playerId, words, round });
+                
+                // Inicializar sospecha si no existe
+                if (!this.memory.suspicions[playerId]) {
+                    this.memory.suspicions[playerId] = 50;
+                }
+                
+                if (this.role === 'civil') {
+                    // Como civil, verifico consistencia con MI palabra
+                    const consistency = this.checkConsistency(words);
+                    if (consistency < 0.3) {
+                        this.memory.suspicions[playerId] -= 20;
+                    } else if (consistency > 0.7) {
+                        this.memory.suspicions[playerId] += 10;
+                    }
+                } else {
+                    // Como impostor, intento adivinar la palabra
+                    this.guessWord(words);
+                }
+            }
+            
+            // Actualizar memoria con mensaje de debate
+            updateDebateMemory(playerId, message, round) {
+                this.memory.debateMessages.push({ player: playerId, message, round });
+            }
+            
+            // Verificar consistencia de palabras con mi palabra secreta
+            checkConsistency(words) {
+                if (!this.word) return 0.5;
+                
+                const wordLower = this.word.toLowerCase();
+                const entry = WORD_DATABASE.find(w => w.word === this.word);
+                const allRelated = [wordLower, ...(entry?.hints || [])];
+                const descriptionWords = words.toLowerCase().split(/[\s,;]+/);
+                
+                let matches = 0;
+                descriptionWords.forEach(dw => {
+                    if (allRelated.some(rw => rw.includes(dw) || dw.includes(rw))) {
+                        matches++;
+                    }
+                });
+                
+                return matches / Math.max(descriptionWords.length, 1);
+            }
+            
+            // El impostor intenta adivinar la palabra
+            guessWord(words) {
+                const candidates = WORD_DATABASE.filter(e => e.category === this.category);
+                if (candidates.length > 0 && Math.random() > 0.4) {
+                    this.memory.suspectedWord = candidates[Math.floor(Math.random() * candidates.length)].word;
+                }
+            }
+            
+            // ============================================
+            // GENERAR DESCRIPCIÓN - PROMPT DINÁMICO
+            // ============================================
+            async generateDescription(round, secretData, allPlayers) {
+                if (this.isHuman) return null;
+                
+                // Construir el historial completo de descripciones
+                const historyText = this.memory.descriptions
+                    .map(d => {
+                        const player = allPlayers.find(p => p.id === d.player);
+                        return `- ${player?.name || 'Jugador'}: "${d.words}" (Ronda ${d.round})`;
+                    })
+                    .join('\n');
+                
+                // Palabras YA USADAS por CUALQUIER jugador (para no repetir)
+                const allUsedWords = this.memory.descriptions
+                    .map(d => d.words.toLowerCase())
+                    .join(', ');
+                
+                // Mis descripciones anteriores
+                const myPreviousDescriptions = this.memory.descriptions
+                    .filter(d => d.player === this.id)
+                    .map(d => d.words)
+                    .join(', ');
+                
+                let prompt;
+                
+                if (this.role === 'civil') {
+                    prompt = `=== JUEGO: EL IMPOSTOR ===
+
+ERES: ${this.personality.name} ${this.personality.emoji}
+TU PERSONALIDAD: ${this.personality.voice}
+EJEMPLOS DE TU ESTILO: ${this.personality.examples}
+
+TU ROL: CIVIL (conoces la palabra secreta)
+TU PALABRA SECRETA: "${secretData.word}"
+CATEGORÍA: ${secretData.category}
+RONDA ACTUAL: ${round}/3
+
+=== REGLAS ESTRICTAS ===
+1. Da EXACTAMENTE 1-3 palabras que describan "${secretData.word}"
+2. NUNCA digas la palabra "${secretData.word}" ni sus derivados
+3. NUNCA repitas estas palabras YA USADAS: ${allUsedWords || '(ninguna aún)'}
+4. NO uses artículos (el, la, un, una)
+5. Mantén tu personalidad ${this.personality.style}
+6. Sé creativo pero claro - los otros civiles deben entenderte
+
+=== HISTORIAL COMPLETO DE DESCRIPCIONES ===
+${historyText || '(Aún no hay descripciones)'}
+
+=== TUS DESCRIPCIONES ANTERIORES ===
+${myPreviousDescriptions || '(ninguna)'}
+
+=== TU TURNO ===
+Eres ${this.personality.name}. Da 1-3 palabras creativas para describir "${secretData.word}" SIN repetir las ya usadas.
+
+Responde SOLO con las palabras, nada más:`;
+                } else {
+                    // IMPOSTOR
+                    prompt = `=== JUEGO: EL IMPOSTOR ===
+
+ERES: ${this.personality.name} ${this.personality.emoji}
+TU PERSONALIDAD: ${this.personality.voice}
+EJEMPLOS DE TU ESTILO: ${this.personality.examples}
+
+TU ROL: IMPOSTOR (NO conoces la palabra secreta)
+CATEGORÍA que conoces: "${secretData.category}"
+RONDA ACTUAL: ${round}/3
+
+=== REGLAS ESTRICTAS ===
+1. Da EXACTAMENTE 1-3 palabras que parezcan describir algo de "${secretData.category}"
+2. NO digas que no sabes la palabra - finge que sí la sabes
+3. NUNCA repitas estas palabras YA USADAS: ${allUsedWords || '(ninguna aún)'}
+4. NO uses artículos (el, la, un, una)
+5. Mantén tu personalidad ${this.personality.style}
+6. Sé VAGO/AMBIGUO pero convincente - debes engañar a los civiles
+
+=== HISTORIAL COMPLETO DE DESCRIPCIONES ===
+${historyText || '(Aún no hay descripciones)'}
+
+=== TU TURNO ===
+Eres ${this.personality.name}, el IMPOSTOR. Da 1-3 palabras ambiguas sobre "${secretData.category}" que parezcan que sabes la palabra.
+
+Responde SOLO con las palabras, nada más:`;
+                }
+                
+                // Llamar a Kimi Swarm
+                const result = await KimiSwarm.generate(prompt, {
+                    player: this.name,
+                    role: this.role,
+                    round,
+                    type: 'description'
+                });
+                
+                // Guardar pensamiento para debug
+                this.thoughts.push({
+                    round,
+                    type: 'description',
+                    prompt: prompt.substring(0, 500),
+                    response: result.text,
+                    agent: result.agent,
+                    attempts: result.attempts
+                });
+                
+                return result.text;
+            }
+            
+            // ============================================
+            // GENERAR MENSAJE DE DEBATE - PROMPT DINÁMICO
+            // ============================================
+            async generateDebateMessage(targetPlayer, accusation, allPlayers, round) {
+                if (this.isHuman) return null;
+                
+                // Historial de descripciones
+                const descriptionsText = this.memory.descriptions
+                    .map(d => {
+                        const player = allPlayers.find(p => p.id === d.player);
+                        const isImpostor = player?.role === 'impostor' ? ' [IMPOSTOR]' : '';
+                        return `- ${player?.name || 'Jugador'}${isImpostor}: "${d.words}" (R${d.round})`;
+                    })
+                    .join('\n');
+                
+                // Historial de debate
+                const debateText = this.memory.debateMessages
+                    .map(d => {
+                        const player = allPlayers.find(p => p.id === d.player);
+                        return `- ${player?.name || 'Jugador'}: "${d.message}"`;
+                    })
+                    .join('\n');
+                
+                // Mis descripciones
+                const myDescriptions = this.memory.descriptions
+                    .filter(d => d.player === this.id)
+                    .map(d => d.words)
+                    .join(' | ');
+                
+                // Sospechas actuales
+                const suspicionsText = Object.entries(this.memory.suspicions)
+                    .map(([id, score]) => {
+                        const player = allPlayers.find(p => p.id == id);
+                        return `${player?.name}: ${score}%`;
+                    })
+                    .join(', ');
+                
+                let prompt;
+                
+                if (this.role === 'civil') {
+                    prompt = `=== JUEGO: EL IMPOSTOR - FASE DE DEBATE ===
+
+ERES: ${this.personality.name} ${this.personality.emoji}
+TU PERSONALIDAD: ${this.personality.voice}
+
+TU ROL: CIVIL
+TU PALABRA SECRETA: "${this.word}"
+
+=== SITUACIÓN ACTUAL ===
+${targetPlayer?.name || 'Alguien'} te acusa: "${accusation}"
+
+=== HISTORIAL DE DESCRIPCIONES ===
+${descriptionsText}
+
+=== DEBATE HASTA AHORA ===
+${debateText || '(Aún no hay mensajes de debate)'}
+
+=== TUS DESCRIPCIONES ===
+${myDescriptions || '(ninguna)'}
+
+=== TUS SOSPECHAS ===
+${suspicionsText || '50% todos'}
+
+=== TU TAREA ===
+Defiéndete como ${this.personality.name}:
+1. Explica por qué tu descripción tiene sentido con "${this.word}"
+2. O acusa a alguien más si te parece sospechoso
+3. NO reveles directamente "${this.word}"
+4. Mantén tu personalidad ${this.personality.style}
+5. Máximo 20 palabras
+
+Responde SOLO con tu mensaje de defensa/acusación:`;
+                } else {
+                    // IMPOSTOR
+                    prompt = `=== JUEGO: EL IMPOSTOR - FASE DE DEBATE ===
+
+ERES: ${this.personality.name} ${this.personality.emoji}
+TU PERSONALIDAD: ${this.personality.voice}
+
+TU ROL: IMPOSTOR
+NO SABES LA PALABRA - Solo conoces la categoría: "${this.category}"
+
+=== SITUACIÓN ACTUAL ===
+${targetPlayer?.name || 'Alguien'} te acusa: "${accusation}"
+
+=== HISTORIAL DE DESCRIPCIONES ===
+${descriptionsText}
+
+=== DEBATE HASTA AHORA ===
+${debateText || '(Aún no hay mensajes de debate)'}
+
+=== TUS DESCRIPCIONES (como impostor) ===
+${myDescriptions || '(ninguna)'}
+
+=== TU TAREA ===
+Defiéndete como ${this.personality.name}:
+1. Finge que SÍ sabes la palabra
+2. Desvía la atención hacia otros jugadores
+3. Mantén tu personalidad ${this.personality.style}
+4. Máximo 20 palabras
+
+Responde SOLO con tu mensaje de defensa/acusación:`;
+                }
+                
+                const result = await KimiSwarm.generate(prompt, {
+                    player: this.name,
+                    role: this.role,
+                    round,
+                    type: 'debate'
+                });
+                
+                this.thoughts.push({
+                    round,
+                    type: 'debate',
+                    prompt: prompt.substring(0, 500),
+                    response: result.text,
+                    agent: result.agent,
+                    attempts: result.attempts
+                });
+                
+                return result.text;
+            }
+            
+            // ============================================
+            // VOTAR - PROMPT DINÁMICO
+            // ============================================
+            async vote(allPlayers, round) {
+                if (this.isHuman) return null;
+                
+                const alivePlayers = allPlayers.filter(p => !p.eliminated && p.id !== this.id);
+                
+                // Historial completo
+                const descriptionsText = this.memory.descriptions
+                    .map(d => {
+                        const player = allPlayers.find(p => p.id === d.player);
+                        return `- ${player?.name}: "${d.words}" (R${d.round})`;
+                    })
+                    .join('\n');
+                
+                const debateText = this.memory.debateMessages
+                    .map(d => {
+                        const player = allPlayers.find(p => p.id === d.player);
+                        return `- ${player?.name}: "${d.message}"`;
+                    })
+                    .join('\n');
+                
+                const candidatesText = alivePlayers
+                    .map(p => `ID ${p.id}: ${p.name}`)
+                    .join('\n');
+                
+                const suspicionsText = Object.entries(this.memory.suspicions)
+                    .map(([id, score]) => {
+                        const player = allPlayers.find(p => p.id == id);
+                        return `${player?.name}: ${score}%`;
+                    })
+                    .join(', ');
+                
+                const prompt = `=== JUEGO: EL IMPOSTOR - VOTACIÓN ===
+
+ERES: ${this.personality.name} ${this.personality.emoji}
+TU ROL: ${this.role.toUpperCase()}
+${this.role === 'civil' ? `TU PALABRA: "${this.word}"` : `CATEGORÍA: "${this.category}" (no sabes la palabra)`}
+
+=== JUGADORES VIVOS ===
+${candidatesText}
+
+=== HISTORIAL DE DESCRIPCIONES ===
+${descriptionsText}
+
+=== DEBATE ===
+${debateText || '(sin debate)'}
+
+=== TUS SOSPECHAS ===
+${suspicionsText || '50% todos'}
+
+=== TU TAREA ===
+${this.role === 'civil' 
+    ? 'Eres CIVIL. Vota por quien crees que es el IMPOSTOR (el más sospechoso).'
+    : 'Eres IMPOSTOR. Vota por un CIVIL para despistar (el que parezca más inocente).'}
+
+Responde SOLO con el ID numérico del jugador (ejemplo: "2"):`;
+                
+                const result = await KimiSwarm.generate(prompt, {
+                    player: this.name,
+                    role: this.role,
+                    round,
+                    type: 'vote'
+                });
+                
+                // Extraer número del resultado
+                const voteMatch = result.text.match(/(\d+)/);
+                const votedId = voteMatch ? parseInt(voteMatch[1]) : null;
+                
+                // Validar que sea un jugador válido
+                const validVote = alivePlayers.find(p => p.id === votedId);
+                const finalVote = validVote ? validVote.id : alivePlayers[0]?.id;
+                
+                this.thoughts.push({
+                    round,
+                    type: 'vote',
+                    prompt: prompt.substring(0, 500),
+                    response: result.text,
+                    parsedVote: finalVote,
+                    agent: result.agent,
+                    attempts: result.attempts
+                });
+                
+                return {
+                    vote: finalVote,
+                    reasoning: this.role === 'civil' 
+                        ? 'Mostró inconsistencias con la palabra secreta'
+                        : 'Parecía demasiado seguro, buen blanco para despistar'
+                };
+            }
+        }
+
+        
+        // ============================================
+        // MOTOR PRINCIPAL DEL JUEGO
+        // ============================================
+        const Game = {
+            players: [],
+            history: [],
+            debateMessages: [],
+            round: 1,
+            maxRounds: 3,
+            secretData: null,
+            isSpectator: false,
+            humanPlayer: null,
+            humanResolve: null,
+            humanDebateResolve: null,
+            humanVoteResolve: null,
+            currentPhase: 'description',
+            skipAnimations: false,
+            
+            startHumanMode() {
+                this.showScreen('name');
+            },
+            
+            startSpectatorMode() {
+                this.isSpectator = true;
+                this.init();
+            },
+            
+            confirmName() {
+                const name = document.getElementById('player-name').value.trim() || 'Detective';
+                this.isSpectator = false;
+                this.init(name);
+            },
+            
+            init(humanName = null) {
+                // Seleccionar palabra secreta
+                this.secretData = WORD_DATABASE[Math.floor(Math.random() * WORD_DATABASE.length)];
+                this.history = [];
+                this.debateMessages = [];
+                this.round = 1;
+                this.players = [];
+                this.skipAnimations = false;
+                
+                // Crear 5 jugadores con personalidades únicas
+                const roles = ['civil', 'civil', 'civil', 'civil', 'impostor'].sort(() => Math.random() - 0.5);
+                
+                for (let i = 0; i < 5; i++) {
+                    const isHuman = (!this.isSpectator && i === 0);
+                    const name = isHuman ? humanName : IA_PERSONALITIES[i].name;
+                    const personality = IA_PERSONALITIES[i];
+                    const player = new Player(i, name, isHuman, roles[i], personality);
+                    
+                    if (player.role === 'civil') {
+                        player.word = this.secretData.word;
+                    } else {
+                        player.category = this.secretData.category;
+                    }
+                    
+                    if (isHuman) this.humanPlayer = player;
+                    this.players.push(player);
+                }
+                
+                this.showLobby();
+            },
+            
+            showLobby() {
+                this.showScreen('lobby');
+                const container = document.getElementById('lobby-assignments');
+                container.innerHTML = this.players.map(p => `
+                    <div class="card p-5 ${p.role === 'impostor' ? 'card-pink' : 'card-cyan'}">
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="avatar ${p.role} w-14 h-14 text-xl">${p.personality.emoji}</div>
+                            <div>
+                                <p class="font-bold text-lg">${p.name}</p>
+                                <span class="tag ${p.role === 'impostor' ? 'tag-pink' : 'tag-cyan'}">${p.role.toUpperCase()}</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-400">
+                            ${p.role === 'civil' 
+                                ? `Palabra: <span class="text-neon-cyan font-bold text-lg">${p.word}</span>` 
+                                : `Categoría: <span class="text-neon-pink font-bold">${p.category}</span>`
+                            }
+                        </p>
+                        <p class="text-xs text-gray-500 mt-2">${p.personality.style}</p>
+                    </div>
+                `).join('');
+                
+                setTimeout(() => this.startGame(), 3000);
+            },
+            
+            async startGame() {
+                this.currentPhase = 'description';
+                this.showScreen('game');
+                this.updateGameInfo();
+                this.updatePlayersStatus();
+                
+                document.getElementById('description-phase').classList.remove('hidden');
+                document.getElementById('debate-phase').classList.add('hidden');
+                
+                // Mostrar debug en modo espectador
+                if (this.isSpectator) {
+                    document.getElementById('debug-panel').classList.remove('hidden');
+                }
+                
+                // Jugar 3 rondas
+                for (let r = 1; r <= this.maxRounds; r++) {
+                    this.round = r;
+                    this.updateGameInfo();
+                    await this.playRound();
+                }
+                
+                // Iniciar debate
+                await this.startDebate();
+            },
+            
+            async playRound() {
+                const alivePlayers = this.players.filter(p => !p.eliminated);
+                
+                for (const player of alivePlayers) {
+                    await this.playTurn(player);
+                    if (!this.skipAnimations) await this.delay(500);
+                }
+            },
+            
+            async playTurn(player) {
+                this.showActivePlayer(player);
+                
+                if (player.isHuman) {
+                    await this.waitForHumanInput(player);
+                } else {
+                    await this.playIATurn(player);
+                }
+                
+                this.updatePlayersStatus();
+            },
+            
+            async playIATurn(player) {
+                document.getElementById('status-dot').className = 'status-dot thinking';
+                document.getElementById('timer-display').textContent = `${player.name} pensando...`;
+                
+                // Mostrar pensamiento en modo espectador
+                if (this.isSpectator) {
+                    const thoughts = player.role === 'civil' 
+                        ? [`¿Cómo describe ${player.name} "${player.word}"?`, 'Analizando...', 'Buscando palabras únicas...']
+                        : [`${player.name} no sabe la palabra...`, 'Intentando adivinar...', 'Debe ser convincente...'];
+                    this.showThought(player, thoughts[Math.floor(Math.random() * thoughts.length)]);
+                }
+                
+                // Mostrar typing indicator
+                document.getElementById('typing-indicator').classList.remove('hidden');
+                
+                try {
+                    const response = await player.generateDescription(this.round, this.secretData, this.players);
+                    
+                    document.getElementById('typing-indicator').classList.add('hidden');
+                    document.getElementById('status-dot').className = 'status-dot online';
+                    document.getElementById('timer-display').textContent = 'Online';
+                    
+                    // Animar escritura
+                    if (!this.skipAnimations) {
+                        await this.animateTyping(response, 400);
+                    } else {
+                        document.getElementById('typing-text').textContent = response;
+                    }
+                    
+                    // Registrar en historial
+                    this.history.push({
+                        player: player.id,
+                        name: player.name,
+                        text: response,
+                        round: this.round,
+                        role: player.role
+                    });
+                    
+                    // Actualizar memoria de TODOS los jugadores
+                    this.players.forEach(p => {
+                        if (p.id !== player.id) {
+                            p.updateMemory(player.id, response, this.round);
+                        }
+                    });
+                    
+                    this.updateHistory();
+                    
+                    // Log en debug
+                    if (this.isSpectator) {
+                        const lastThought = player.thoughts[player.thoughts.length - 1];
+                        this.logDebug(`${player.name} (${player.role}): "${response}" [Agente ${lastThought.agent}, ${lastThought.attempts} intentos]`, 'success');
+                    }
+                    
+                    // Actualizar progreso
+                    const progress = (this.history.length / (this.maxRounds * 5)) * 50;
+                    document.getElementById('game-progress').style.width = `${progress}%`;
+                    
+                } catch (error) {
+                    document.getElementById('typing-indicator').classList.add('hidden');
+                    this.logDebug(`❌ ERROR: ${error.message}`, 'error');
+                    alert('Error de conexión con Kimi K2. Todos los agentes fallaron. Recarga la página.');
+                    throw error;
+                }
+            },
+            
+            async waitForHumanInput(player) {
+                document.getElementById('human-input-area').classList.remove('hidden');
+                document.getElementById('human-description').value = '';
+                document.getElementById('human-description').focus();
+                
+                return new Promise(resolve => {
+                    this.humanResolve = resolve;
+                });
+            },
+            
+            submitHumanDescription() {
+                const input = document.getElementById('human-description');
+                const words = input.value.trim();
+                
+                if (!words) return;
+                
+                const articles = ['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'al', 'y', 'o', 'pero', 'con', 'por', 'para'];
+                const contentWords = words.toLowerCase().split(/[\s,;]+/).filter(w => w && !articles.includes(w));
+                
+                if (contentWords.length > 3) {
+                    alert('Máximo 3 palabras de contenido');
+                    return;
+                }
+                
+                const player = this.humanPlayer;
+                
+                this.history.push({
+                    player: player.id,
+                    name: player.name,
+                    text: words,
+                    round: this.round,
+                    role: player.role
+                });
+                
+                // Actualizar memoria de las IAs
+                this.players.forEach(p => {
+                    if (!p.isHuman) {
+                        p.updateMemory(player.id, words, this.round);
+                    }
+                });
+                
+                this.updateHistory();
+                document.getElementById('human-input-area').classList.add('hidden');
+                document.getElementById('typing-text').textContent = words;
+                
+                if (this.humanResolve) {
+                    this.humanResolve();
+                    this.humanResolve = null;
+                }
+            },
+            
+            async startDebate() {
+                this.currentPhase = 'debate';
+                document.getElementById('game-phase').textContent = 'Fase: Debate';
+                document.getElementById('description-phase').classList.add('hidden');
+                document.getElementById('debate-phase').classList.remove('hidden');
+                
+                const alivePlayers = this.players.filter(p => !p.eliminated);
+                
+                // 2 rondas de debate
+                for (let dr = 0; dr < 2; dr++) {
+                    for (const player of alivePlayers) {
+                        document.getElementById('debate-turn-indicator').textContent = `Turno de: ${player.name}`;
+                        
+                        if (player.isHuman) {
+                            await this.waitForHumanDebate();
+                        } else {
+                            await this.playIADebate(player);
+                        }
+                        
+                        if (!this.skipAnimations) await this.delay(600);
+                    }
+                }
+                
+                await this.delay(800);
+                this.startVoting();
+            },
+            
+            async playIADebate(player) {
+                document.getElementById('status-dot').className = 'status-dot thinking';
+                document.getElementById('timer-display').textContent = `${player.name} debatiendo...`;
+                
+                // Elegir a quién acusar
+                let targetPlayer = null;
+                let accusation = "Tu descripción fue sospechosa";
+                
+                if (player.role === 'civil') {
+                    // Acusar al más sospechoso
+                    let minConf = 101;
+                    this.players.forEach(p => {
+                        if (p.id !== player.id && !p.eliminated) {
+                            const conf = player.memory.suspicions[p.id] || 50;
+                            if (conf < minConf) {
+                                minConf = conf;
+                                targetPlayer = p;
+                            }
+                        }
+                    });
+                    if (targetPlayer) {
+                        accusation = `Las pistas de ${targetPlayer.name} no encajan con lo que yo sé`;
+                    }
+                } else {
+                    // Impostor acusa aleatoriamente
+                    const others = this.players.filter(p => p.id !== player.id && !p.eliminated);
+                    targetPlayer = others[Math.floor(Math.random() * others.length)];
+                    accusation = `Creo que ${targetPlayer.name} está ocultando algo`;
+                }
+                
+                try {
+                    const response = await player.generateDebateMessage(targetPlayer, accusation, this.players, this.round);
+                    
+                    document.getElementById('status-dot').className = 'status-dot online';
+                    document.getElementById('timer-display').textContent = 'Online';
+                    
+                    const messageData = {
+                        player: player.id,
+                        name: player.name,
+                        message: response,
+                        role: player.role,
+                        target: targetPlayer?.id
+                    };
+                    
+                    this.debateMessages.push(messageData);
+                    
+                    // Actualizar memoria de debate de TODOS
+                    this.players.forEach(p => {
+                        p.updateDebateMemory(player.id, response, this.round);
+                    });
+                    
+                    this.addDebateMessage(player, response);
+                    
+                    if (this.isSpectator) {
+                        const lastThought = player.thoughts[player.thoughts.length - 1];
+                        this.logDebug(`[DEBATE] ${player.name}: "${response}" [Agente ${lastThought.agent}]`, 'info');
+                    }
+                    
+                } catch (error) {
+                    this.logDebug(`❌ ERROR en debate: ${error.message}`, 'error');
+                    throw error;
+                }
+            },
+            
+            async waitForHumanDebate() {
+                document.getElementById('human-debate-input').classList.remove('hidden');
+                document.getElementById('debate-input').value = '';
+                document.getElementById('debate-input').focus();
+                
+                return new Promise(resolve => {
+                    this.humanDebateResolve = resolve;
+                });
+            },
+            
+            submitDebateMessage() {
+                const input = document.getElementById('debate-input');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                const lowerMessage = message.toLowerCase();
+                if (this.humanPlayer?.word && lowerMessage.includes(this.humanPlayer.word.toLowerCase())) {
+                    if (!confirm('⚠️ ¿Seguro? Parece que revelas tu palabra. ¿Continuar?')) return;
+                }
+                
+                const player = this.humanPlayer;
+                const messageData = {
+                    player: player.id,
+                    name: player.name,
+                    message: message,
+                    role: player.role
+                };
+                
+                this.debateMessages.push(messageData);
+                
+                // Actualizar memoria de debate de las IAs
+                this.players.forEach(p => {
+                    if (!p.isHuman) {
+                        p.updateDebateMemory(player.id, message, this.round);
+                    }
+                });
+                
+                this.addDebateMessage(player, message);
+                document.getElementById('human-debate-input').classList.add('hidden');
+                
+                if (this.humanDebateResolve) {
+                    this.humanDebateResolve();
+                    this.humanDebateResolve = null;
+                }
+            },
+            
+            async startVoting() {
+                this.currentPhase = 'voting';
+                this.showScreen('voting');
+                
+                const alivePlayers = this.players.filter(p => !p.eliminated);
+                this.renderVotingGrid(alivePlayers);
+                
+                const votes = {};
+                
+                for (const player of alivePlayers) {
+                    if (player.isHuman) {
+                        votes[player.id] = await this.waitForHumanVote();
+                    } else {
+                        document.getElementById('timer-display').textContent = `${player.name} votando...`;
+                        
+                        try {
+                            const response = await player.vote(this.players, this.round);
+                            votes[player.id] = response.vote;
+                            
+                            if (this.isSpectator) {
+                                this.showVotingThought(player, response.reasoning);
+                            }
+                        } catch (error) {
+                            this.logDebug(`❌ ERROR en voto: ${error.message}`, 'error');
+                            throw error;
+                        }
+                        
+                        if (!this.skipAnimations) await this.delay(500);
+                    }
+                }
+                
+                // Contar votos
+                const voteCounts = {};
+                for (const [voter, voted] of Object.entries(votes)) {
+                    voteCounts[voted] = (voteCounts[voted] || 0) + 1;
+                }
+                
+                let maxVotes = 0;
+                let eliminatedId = null;
+                for (const [playerId, count] of Object.entries(voteCounts)) {
+                    if (count > maxVotes) {
+                        maxVotes = count;
+                        eliminatedId = parseInt(playerId);
+                    }
+                }
+                
+                const eliminatedPlayer = this.players.find(p => p.id === eliminatedId);
+                if (eliminatedPlayer) eliminatedPlayer.eliminated = true;
+                
+                this.showResult(eliminatedPlayer);
+            },
+            
+            async waitForHumanVote() {
+                return new Promise(resolve => {
+                    this.humanVoteResolve = resolve;
+                });
+            },
+            
+            submitHumanVote(playerId) {
+                if (this.humanVoteResolve) {
+                    this.humanVoteResolve(playerId);
+                    this.humanVoteResolve = null;
+                }
+            },
+            
+            showResult(eliminatedPlayer) {
+                this.showScreen('result');
+                document.getElementById('attempt-counter').classList.add('hidden');
+                
+                const impostor = this.players.find(p => p.role === 'impostor');
+                const impostorWins = !eliminatedPlayer || eliminatedPlayer.role !== 'impostor';
+                const winners = impostorWins ? [impostor] : this.players.filter(p => p.role === 'civil');
+                const losers = impostorWins ? this.players.filter(p => p.role === 'civil') : [impostor];
+                
+                const title = document.getElementById('result-title');
+                const subtitle = document.getElementById('result-subtitle');
+                const icon = document.getElementById('result-icon');
+                
+                if (impostorWins) {
+                    icon.textContent = '🎭';
+                    title.textContent = '¡EL IMPOSTOR GANA!';
+                    title.className = 'text-6xl font-black mb-4 text-neon-pink';
+                    subtitle.textContent = `${impostor.name} engañó a todos`;
+                } else {
+                    icon.textContent = '🏆';
+                    title.textContent = '¡CIVILES GANAN!';
+                    title.className = 'text-6xl font-black mb-4 text-neon-cyan';
+                    subtitle.textContent = `Descubrieron a ${impostor.name}`;
+                }
+                
+                document.getElementById('winners-list').innerHTML = winners.map(w => `
+                    <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+                        <div class="avatar ${w.role} w-12 h-12 text-lg">${w.personality.emoji}</div>
+                        <div>
+                            <p class="font-bold">${w.name}</p>
+                            <span class="tag ${w.role === 'impostor' ? 'tag-pink' : 'tag-cyan'} text-xs">${w.role.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('losers-list').innerHTML = losers.map(l => `
+                    <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+                        <div class="avatar ${l.role} w-12 h-12 text-lg">${l.personality.emoji}</div>
+                        <div>
+                            <p class="font-bold">${l.name}</p>
+                            <span class="tag ${l.role === 'impostor' ? 'tag-pink' : 'tag-cyan'} text-xs">${l.role.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('revealed-word').textContent = this.secretData.word;
+                
+                if (this.isSpectator) {
+                    document.getElementById('analysis-btn').classList.remove('hidden');
+                }
+                
+                this.saveGame();
+            },
+            
+            saveGame() {
+                const gameData = {
+                    date: new Date().toISOString(),
+                    isSpectator: this.isSpectator,
+                    word: this.secretData,
+                    players: this.players.map(p => ({
+                        name: p.name,
+                        role: p.role,
+                        personality: p.personality,
+                        thoughts: p.thoughts
+                    })),
+                    history: this.history,
+                    debateMessages: this.debateMessages
+                };
+                
+                const saved = JSON.parse(localStorage.getItem('impostor_games') || '[]');
+                saved.push(gameData);
+                localStorage.setItem('impostor_games', JSON.stringify(saved.slice(-10)));
+            },
+            
+            showAnalysis() {
+                document.getElementById('analysis-panel').classList.remove('hidden');
+                
+                document.getElementById('confidence-chart').innerHTML = this.players.map(p => {
+                    const avgConf = Object.values(p.memory.suspicions).reduce((a, b) => a + b, 0) / (Object.values(p.memory.suspicions).length || 1);
+                    return `
+                        <div class="flex items-center gap-3">
+                            <span class="w-24 text-sm">${p.name}</span>
+                            <div class="flex-1 confidence-track">
+                                <div class="confidence-bar" style="width: ${avgConf}%; background: ${p.role === 'impostor' ? 'var(--neon-pink)' : 'var(--neon-cyan)'}"></div>
+                            </div>
+                            <span class="text-sm text-gray-500 w-12">${Math.round(avgConf)}%</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('debate-timeline').innerHTML = this.players.flatMap(p => 
+                    p.thoughts.map(t => `
+                        <div class="card p-3 text-sm">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-bold ${p.role === 'impostor' ? 'text-neon-pink' : 'text-neon-cyan'}">${p.name}</span>
+                                <span class="text-xs text-gray-500">${t.type} R${t.round} [A${t.agent}]</span>
+                            </div>
+                            <p class="text-gray-400 text-xs">${t.response?.substring(0, 60)}...</p>
+                        </div>
+                    `)
+                ).join('');
+            },
+            
+            exportGame() {
+                const gameData = {
+                    date: new Date().toISOString(),
+                    isSpectator: this.isSpectator,
+                    word: this.secretData,
+                    players: this.players.map(p => ({
+                        name: p.name,
+                        role: p.role,
+                        personality: p.personality,
+                        thoughts: p.thoughts,
+                        memory: p.memory
+                    })),
+                    history: this.history,
+                    debateMessages: this.debateMessages
+                };
+                
+                const blob = new Blob([JSON.stringify(gameData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `impostor-game-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            },
+            
+            restart() {
+                this.skipAnimations = false;
+                this.showLobby();
+            },
+            
+            // UI Functions
+            showScreen(name) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(`screen-${name}`).classList.add('active');
+            },
+            
+            updateGameInfo() {
+                document.getElementById('current-round').textContent = this.round;
+            },
+            
+            showActivePlayer(player) {
+                const avatar = document.getElementById('active-avatar');
+                const name = document.getElementById('active-name');
+                const role = document.getElementById('active-role');
+                
+                avatar.className = `avatar mb-6 text-5xl w-28 h-28 avatar-glow ${player.role}`;
+                avatar.textContent = player.personality.emoji;
+                name.textContent = player.name;
+                
+                if (player.role === 'civil') {
+                    role.className = 'tag tag-cyan mb-6';
+                    role.textContent = 'Civil';
+                } else {
+                    role.className = 'tag tag-pink mb-6';
+                    role.textContent = 'Impostor';
+                }
+                
+                const wordDisplay = document.getElementById('word-display');
+                const categoryDisplay = document.getElementById('category-display');
+                
+                if (this.isSpectator || player.isHuman) {
+                    if (player.role === 'civil') {
+                        wordDisplay.classList.remove('hidden');
+                        categoryDisplay.classList.add('hidden');
+                        document.getElementById('secret-word').textContent = player.word;
+                    } else {
+                        wordDisplay.classList.add('hidden');
+                        categoryDisplay.classList.remove('hidden');
+                        document.getElementById('secret-category').textContent = player.category;
+                    }
+                } else {
+                    wordDisplay.classList.add('hidden');
+                    categoryDisplay.classList.add('hidden');
+                }
+                
+                document.getElementById('typing-text').textContent = '';
+                document.getElementById('thought-bubble').classList.add('hidden');
+            },
+            
+            async animateTyping(text, duration) {
+                const el = document.getElementById('typing-text');
+                el.textContent = '';
+                const chars = text.split('');
+                const delay = duration / chars.length;
+                
+                for (const char of chars) {
+                    el.textContent += char;
+                    if (!this.skipAnimations) await new Promise(r => setTimeout(r, delay));
+                }
+            },
+            
+            showThought(player, thought) {
+                document.getElementById('thought-bubble').classList.remove('hidden');
+                document.getElementById('thought-text').textContent = `"${thought}"`;
+            },
+            
+            updatePlayersStatus() {
+                const container = document.getElementById('players-status');
+                container.innerHTML = this.players.map(p => `
+                    <div class="flex items-center gap-3 p-2 rounded-lg ${p.eliminated ? 'opacity-40' : 'bg-white/5'}">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg" 
+                             style="background: ${p.role === 'impostor' ? 'rgba(255,45,149,0.2)' : 'rgba(0,245,255,0.2)'}; border: 1px solid ${p.role === 'impostor' ? 'var(--neon-pink)' : 'var(--neon-cyan)'};">
+                            ${p.personality.emoji}
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm">${p.name} ${p.isHuman ? '(TÚ)' : ''}</p>
+                            ${this.isSpectator ? `<span class="text-xs ${p.role === 'impostor' ? 'text-pink-400' : 'text-cyan-400'}">${p.role.toUpperCase()}</span>` : ''}
+                        </div>
+                        ${p.eliminated ? '<span class="text-xs text-gray-500">❌</span>' : '<span class="w-2 h-2 rounded-full bg-green-400"></span>'}
+                    </div>
+                `).join('');
+            },
+            
+            updateHistory() {
+                document.getElementById('history-count').textContent = `(${this.history.length})`;
+                document.getElementById('game-history').innerHTML = this.history.map(h => `
+                    <div class="timeline-item">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold ${h.role === 'impostor' ? 'text-pink-400' : 'text-cyan-400'}">${h.name}</span>
+                            <span class="text-xs text-gray-500">R${h.round}</span>
+                        </div>
+                        <p class="text-gray-300 text-sm">"${h.text}"</p>
+                    </div>
+                `).join('');
+                document.getElementById('game-history').scrollTop = document.getElementById('game-history').scrollHeight;
+            },
+            
+            addDebateMessage(player, message) {
+                const chat = document.getElementById('debate-chat');
+                const div = document.createElement('div');
+                div.className = `chat-bubble ${player.role}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-bold text-sm">${player.name} ${player.personality.emoji}</span>
+                        ${this.isSpectator ? `<span class="tag ${player.role === 'impostor' ? 'tag-pink' : 'tag-cyan'} text-xs">${player.role.toUpperCase()}</span>` : ''}
+                    </div>
+                    <p>${message}</p>
+                `;
+                chat.appendChild(div);
+                chat.scrollTop = chat.scrollHeight;
+            },
+            
+            renderVotingGrid(players) {
+                document.getElementById('voting-grid').innerHTML = players.map(p => `
+                    <div class="card p-6 text-center vote-card transition-all" onclick="Game.submitHumanVote(${p.id})" data-player-id="${p.id}">
+                        <div class="avatar ${p.role} mx-auto mb-3 w-16 h-16 text-2xl">${p.personality.emoji}</div>
+                        <p class="font-bold">${p.name}</p>
+                        ${this.isSpectator ? `<span class="tag ${p.role === 'impostor' ? 'tag-pink' : 'tag-cyan'} text-xs mt-2">${p.role.toUpperCase()}</span>` : ''}
+                    </div>
+                `).join('');
+                
+                if (this.isSpectator) {
+                    document.getElementById('voting-thoughts').classList.remove('hidden');
+                }
+            },
+            
+            showVotingThought(player, reasoning) {
+                const list = document.getElementById('thoughts-list');
+                const div = document.createElement('div');
+                div.className = 'card p-4';
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="font-bold ${player.role === 'impostor' ? 'text-neon-pink' : 'text-neon-cyan'}">${player.name} ${player.personality.emoji}</span>
+                        <span class="text-xs text-gray-500">${player.role === 'impostor' ? '(Impostor)' : '(Civil)'}</span>
+                    </div>
+                    <p class="text-sm text-gray-400">${reasoning}</p>
+                `;
+                list.appendChild(div);
+            },
+            
+            logDebug(msg, type = 'info') {
+                const debug = document.getElementById('debug-content');
+                if (!debug) return;
+                const entry = document.createElement('div');
+                entry.className = `log-entry log-${type}`;
+                entry.innerHTML = `<span class="text-gray-600">${new Date().toLocaleTimeString()}</span> ${msg}`;
+                debug.appendChild(entry);
+                debug.scrollTop = debug.scrollHeight;
+            },
+            
+            toggleDebug() {
+                document.getElementById('debug-content').classList.toggle('hidden');
+            },
+            
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        };
+        
+        // Event listeners
+        document.getElementById('human-description')?.addEventListener('input', function() {
+            const articles = ['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'al', 'y', 'o', 'pero', 'con', 'por', 'para'];
+            const words = this.value.toLowerCase().split(/[\s,;]+/).filter(w => w && !articles.includes(w));
+            document.getElementById('word-count').textContent = words.length;
+            document.getElementById('word-count').className = words.length > 3 ? 'text-pink-400 font-bold' : 'text-cyan-400 font-bold';
+        });
+        
+        document.getElementById('human-description')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') Game.submitHumanDescription();
+        });
+        
+        document.getElementById('debate-input')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') Game.submitDebateMessage();
+        });
+        
+        document.getElementById('player-name')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') Game.confirmName();
+        });
+        
+        console.log('🎮 THE IMPOSTOR - Kimi K2 Edition');
+        console.log('✅ 22 agentes de respaldo');
+        console.log('✅ Prompts dinámicos actualizados cada turno');
+        console.log('✅ Sin fallback - solo Kimi K2');
+    </script>
+</body>
+</html>
